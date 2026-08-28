@@ -1,0 +1,110 @@
+.term {
+  font-family: "SF Mono", "Courier New", Consolas, monospace;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  margin-top: 16px;
+  overflow: hidden;
+}
+
+.term-titlebar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--surface);
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.term-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.term-dot-red {
+  background: #f4212e;
+}
+
+.term-dot-yellow {
+  background: #ffb800;
+}
+
+.term-dot-green {
+  background: #39ff88;
+}
+
+.term-titletext {
+  margin-left: 8px;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.term-body {
+  padding: 16px;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.term-line {
+  color: var(--text-secondary);
+  margin-top: 14px;
+}
+
+.term-line:first-child {
+  margin-top: 0;
+}
+
+.term-prompt {
+  color: #39ff88;
+}
+
+.term-value {
+  color: var(--text);
+  padding-left: 16px;
+}
+
+.term-accent-green {
+  color: #39ff88;
+}
+
+.term-accent-purple {
+  color: #a855f7;
+}
+
+.term-btn {
+  font-family: inherit;
+  background: none;
+  border: none;
+  color: #f4212e;
+  cursor: pointer;
+  padding: 0;
+  font-size: 14px;
+}
+
+.term-btn:disabled {
+  opacity: 0.5;
+}
+
+.term-cursor-line {
+  margin-top: 14px;
+}
+
+.term-cursor {
+  display: inline-block;
+  width: 8px;
+  height: 14px;
+  background: #39ff88;
+  animation: term-blink 1s step-end infinite;
+  vertical-align: middle;
+}
+
+@keyframes term-blink {
+  0%,
+  50% {
+    opacity: 1;
+  }
+  51%,
+  100% {
+    opacity: 0;
+  }
+}
