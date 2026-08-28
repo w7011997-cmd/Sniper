@@ -1,35 +1,18 @@
-import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider, useAuth } from "./auth/AuthContext";
 import AuthForm from "./auth/AuthForm";
-import { supabase } from "./shared/supabaseClient";
-import { usePushRegistration } from "./push/usePushRegistration";
-import { useWallet } from "./wallet/useWallet";
-import PlayerList from "./challenges/PlayerList";
+import BottomNav from "./nav/BottomNav";
+import LiveMatches from "./dashboard/LiveMatches";
 import IncomingChallenges from "./challenges/IncomingChallenges";
+import PlayerList from "./challenges/PlayerList";
+import RankingsPage from "./rankings/RankingsPage";
+import MessagesPage from "./messages/MessagesPage";
+import ProfilePage from "./profile/ProfilePage";
 
-function Home() {
-  const { session } = useAuth();
-  usePushRegistration();
+function MatchesPage() {
   return (
     <div>
-      <h1>Sniper</h1>
-      <p>Signed in as: {session?.user.email}</p>
-      <button onClick={() => supabase.auth.signOut()}>Sign out</button>
-      <nav>
-        <Link to="/dashboard">Dashboard</Link>
-      </nav>
-    </div>
-  );
-}
-
-function Dashboard() {
-  const { balanceCents } = useWallet();
-  return (
-    <div>
-      <h2>Wallet</h2>
-      <p>
-        Balance: ₦{balanceCents !== null ? (balanceCents / 100).toFixed(2) : "..."}
-      </p>
+      <h1>Matches</h1>
       <IncomingChallenges />
       <PlayerList />
     </div>
@@ -43,10 +26,18 @@ function Gate() {
   if (!session) return <AuthForm />;
 
   return (
-    <Routes>
-      <Route path="/" element={<Home />} />
-      <Route path="/dashboard" element={<Dashboard />} />
-    </Routes>
+    <div className="app-shell">
+      <div className="app-content">
+        <Routes>
+          <Route path="/" element={<LiveMatches />} />
+          <Route path="/matches" element={<MatchesPage />} />
+          <Route path="/rankings" element={<RankingsPage />} />
+          <Route path="/messages" element={<MessagesPage />} />
+          <Route path="/profile" element={<ProfilePage />} />
+        </Routes>
+      </div>
+      <BottomNav />
+    </div>
   );
 }
 
