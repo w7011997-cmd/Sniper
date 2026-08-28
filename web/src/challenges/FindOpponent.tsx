@@ -128,12 +128,11 @@ export default function FindOpponent() {
 
       {visible.map((p) => (
         <div key={p.player_id} className="fo-card">
-          <div className="fo-avatar">
-            {p.username.charAt(0).toUpperCase()}
-            {p.is_online && <span className="fo-avatar-dot" />}
-          </div>
           <div className="fo-info">
-            <div className="fo-username">{p.username}</div>
+            <div className="fo-username">
+              {p.is_online && <span className="fo-online-inline-dot" />}
+              {p.username}
+            </div>
             <div className="fo-substats">
               {p.rating_count > 0 ? (
                 <span>★ {p.avg_rating.toFixed(1)} ({p.rating_count} reviews)</span>

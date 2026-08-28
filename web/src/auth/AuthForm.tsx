@@ -15,12 +15,38 @@ export default function AuthForm() {
     setBusy(true);
 
     if (mode === "signup") {
+      const trimmedUsername = username.trim();
+      if (!trimmedUsername) {
+        setError("Username is required.");
+        setBusy(false);
+        return;
+      }
+
+      const { data: existing } = await supabase
+        .from("profiles")
+        .select("id")
+        .eq("username", trimmedUsername)
+        .maybeSingle();
+
+      if (existing) {
+        setError("That username is already taken — try another.");
+        setBusy(false);
+        return;
+      }
+
       const { error } = await supabase.auth.signUp({
         email,
         password,
-        options: { data: { username } },
+        options: { data: { username: trimmedUsername } },
       });
-      if (error) setError(error.message);
+
+      if (error) {
+        setError(
+          error.message.toLowerCase().includes("username")
+            ? "That username was just taken — try another."
+            : error.message
+        );
+      }
     } else {
       const { error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) setError(error.message);
