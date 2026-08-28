@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { useAuth } from "../auth/AuthContext";
 import { supabase } from "../shared/supabaseClient";
 
@@ -62,7 +63,7 @@ export default function PlayerList() {
             borderBottom: "1px solid var(--border)",
           }}
         >
-          <span style={{ flex: 1 }}>{p.username}</span>
+          <Link to={`/players/${p.id}`} className="player-link" style={{ flex: 1 }}>{p.username}</Link>
           <input
             type="number"
             placeholder="₦ stake"

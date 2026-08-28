@@ -9,6 +9,7 @@ import MyMatches from "./matches/MyMatches";
 import RankingsPage from "./rankings/RankingsPage";
 import MessagesPage from "./messages/MessagesPage";
 import ProfilePage from "./profile/ProfilePage";
+import PlayerProfilePage from "./players/PlayerProfilePage";
 
 function MatchesPage() {
   return (
@@ -38,6 +39,7 @@ function Gate() {
           <Route path="/rankings" element={<RankingsPage />} />
           <Route path="/messages" element={<MessagesPage />} />
           <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/players/:id" element={<PlayerProfilePage />} />
         </Routes>
       </div>
       <BottomNav />
