@@ -6,6 +6,7 @@ import { usePushRegistration } from "./push/usePushRegistration";
 
 function Home() {
   const { session } = useAuth();
+  usePushRegistration();
   return (
     <div>
       <h1>Sniper</h1>
