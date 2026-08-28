@@ -4,7 +4,7 @@ import AuthForm from "./auth/AuthForm";
 import BottomNav from "./nav/BottomNav";
 import LiveMatches from "./dashboard/LiveMatches";
 import IncomingChallenges from "./challenges/IncomingChallenges";
-import PlayerList from "./challenges/PlayerList";
+import FindOpponent from "./challenges/FindOpponent";
 import MyMatches from "./matches/MyMatches";
 import RankingsPage from "./rankings/RankingsPage";
 import MessagesPage from "./messages/MessagesPage";
@@ -16,7 +16,7 @@ function MatchesPage() {
       <h1>Matches</h1>
       <IncomingChallenges />
       <MyMatches />
-      <PlayerList />
+      <FindOpponent />
     </div>
   );
 }

@@ -2,7 +2,7 @@ import { NavLink } from "react-router-dom";
 
 const items = [
   { to: "/", label: "Live", end: true },
-  { to: "/matches", label: "Matches" },
+  { to: "/matches", label: "Find Opponent" },
   { to: "/rankings", label: "Rankings" },
   { to: "/messages", label: "Messages" },
   { to: "/profile", label: "Profile" },

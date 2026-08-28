@@ -1,0 +1,132 @@
+.find-opponent {
+  --fo-green: #39ff88;
+  --fo-purple: #a855f7;
+}
+
+.fo-stats-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  border: 1px solid var(--fo-green);
+  border-radius: 14px;
+  padding: 16px;
+  margin: 12px 0;
+  background: rgba(57, 255, 136, 0.06);
+}
+
+.fo-stat-number {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--fo-green);
+  text-align: center;
+}
+
+.fo-stat-label {
+  font-size: 11px;
+  color: var(--text-secondary);
+  text-align: center;
+}
+
+.fo-stats-divider {
+  width: 1px;
+  align-self: stretch;
+  background: var(--border);
+}
+
+.fo-search {
+  width: 100%;
+  margin: 4px 0 12px;
+}
+
+.fo-filters {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+}
+
+.fo-chip {
+  flex-shrink: 0;
+  border: 1px solid var(--border);
+  border-radius: 9999px;
+  padding: 8px 14px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  background: transparent;
+}
+
+.fo-chip-active {
+  border-color: var(--fo-green);
+  color: var(--fo-green);
+}
+
+.fo-list-header {
+  color: var(--fo-green);
+  font-weight: 700;
+  font-size: 13px;
+  margin: 12px 0 4px;
+}
+
+.fo-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 12px;
+  margin: 8px 0;
+}
+
+.fo-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 2px solid var(--fo-green);
+  background: var(--surface);
+  color: var(--fo-green);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+.fo-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.fo-username {
+  font-weight: 700;
+}
+
+.fo-substats {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.fo-trophy {
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.fo-trophy-number {
+  color: var(--fo-purple);
+  font-weight: 800;
+  font-size: 16px;
+}
+
+.fo-challenge-btn {
+  border: 1px solid var(--fo-purple);
+  color: var(--fo-purple);
+  background: transparent;
+  border-radius: 9999px;
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.fo-challenge-btn:hover {
+  background: rgba(168, 85, 247, 0.1);
+}
