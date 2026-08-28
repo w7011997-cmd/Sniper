@@ -3,6 +3,9 @@ import { AuthProvider, useAuth } from "./auth/AuthContext";
 import AuthForm from "./auth/AuthForm";
 import { supabase } from "./shared/supabaseClient";
 import { usePushRegistration } from "./push/usePushRegistration";
+import { useWallet } from "./wallet/useWallet";
+import PlayerList from "./challenges/PlayerList";
+import IncomingChallenges from "./challenges/IncomingChallenges";
 
 function Home() {
   const { session } = useAuth();
@@ -10,7 +13,6 @@ function Home() {
   return (
     <div>
       <h1>Sniper</h1>
-      <p>Dashboard, challenges, betting, and match view will live here.</p>
       <p>Signed in as: {session?.user.email}</p>
       <button onClick={() => supabase.auth.signOut()}>Sign out</button>
       <nav>
@@ -21,7 +23,17 @@ function Home() {
 }
 
 function Dashboard() {
-  return <h2>Live matches dashboard (placeholder)</h2>;
+  const { balanceCents } = useWallet();
+  return (
+    <div>
+      <h2>Wallet</h2>
+      <p>
+        Balance: ₦{balanceCents !== null ? (balanceCents / 100).toFixed(2) : "..."}
+      </p>
+      <IncomingChallenges />
+      <PlayerList />
+    </div>
+  );
 }
 
 function Gate() {
