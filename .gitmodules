@@ -1,0 +1,3 @@
+[submodule "billiards-engine"]
+	path = billiards-engine
+	url = https://github.com/w7011997-cmd/billiards.git
