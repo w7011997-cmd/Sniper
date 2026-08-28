@@ -58,7 +58,7 @@ export default function IncomingChallenges() {
           }}
         >
           <span style={{ flex: 1 }}>
-            {c.challenger?.username ?? "Someone"} — ₦{(c.stake_cents / 100).toFixed(2)}
+            {c.challenger?.username ?? "Someone"} — 🪙{(c.stake_cents / 100).toFixed(2)}
           </span>
           <button type="button" disabled={busyId === c.id} onClick={() => respond(c.id, true)}>
             Accept

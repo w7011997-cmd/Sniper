@@ -33,7 +33,7 @@ function MatchCard({ match, onBet }: { match: LiveMatch; onBet: (m: LiveMatch, b
         </div>
       </div>
       <p className="stat-secondary" style={{ textAlign: "center" }}>
-        Stake: ₦{(match.stake_cents / 100).toFixed(2)} each
+        Stake: 🪙{(match.stake_cents / 100).toFixed(2)} each
       </p>
       <div className="bet-row">
         <button className="bet-btn bet-btn-a" onClick={() => onBet(match, match.player_a)}>
@@ -52,7 +52,7 @@ export default function LiveMatches() {
   const [message, setMessage] = useState<string | null>(null);
 
   async function handleBet(match: LiveMatch, backedPlayer: string) {
-    const raw = window.prompt("How much do you want to bet (₦)?");
+    const raw = window.prompt("How much do you want to bet (🪙)?");
     const naira = Number(raw);
     if (!raw || isNaN(naira) || naira <= 0) return;
 

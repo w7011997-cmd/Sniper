@@ -71,7 +71,7 @@ export default function ProfilePage() {
           <div style={{ flex: 1 }}>
             <div className="stat-secondary">WALLET BALANCE</div>
             <div className="profile-row-value" style={{ color: "#22c55e" }}>
-              ₦{p.balanceCents !== null ? (p.balanceCents / 100).toFixed(2) : "..."}
+              🪙{p.balanceCents !== null ? (p.balanceCents / 100).toFixed(2) : "..."}
             </div>
           </div>
           <div className="chevron">›</div>

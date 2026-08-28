@@ -59,7 +59,7 @@ export default function FindOpponent() {
   }, [players, search, filter]);
 
   async function sendChallenge(opponentId: string) {
-    const raw = window.prompt("Stake amount (₦)?");
+    const raw = window.prompt("Stake amount (🪙)?");
     const naira = Number(raw);
     if (!raw || isNaN(naira) || naira <= 0) return;
 

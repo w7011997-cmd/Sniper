@@ -72,7 +72,7 @@ export default function PlayerProfilePage() {
             <div>{m.won ? "🏆" : "❌"}</div>
             <div style={{ flex: 1 }}>
               <div>{m.won ? "Won" : "Lost"} vs {m.opponentName}</div>
-              <div className="stat-secondary">₦{(m.stakeCents / 100).toFixed(2)} stake</div>
+              <div className="stat-secondary">🪙{(m.stakeCents / 100).toFixed(2)} stake</div>
             </div>
           </div>
         ))}

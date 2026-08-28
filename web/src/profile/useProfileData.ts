@@ -84,7 +84,7 @@ export function useProfileData(): ProfileData {
         matchActivity.push({
           icon: won ? "🏆" : "❌",
           label: won ? "Match won" : "Match lost",
-          sub: `vs ${opponent} — ₦${(m.stake_cents / 100).toFixed(2)}`,
+          sub: `vs ${opponent} — 🪙${(m.stake_cents / 100).toFixed(2)}`,
           time: m.ended_at ? timeAgo(m.ended_at) : "",
         });
       }

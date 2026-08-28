@@ -66,7 +66,7 @@ export default function PlayerList() {
           <Link to={`/players/${p.id}`} className="player-link" style={{ flex: 1 }}>{p.username}</Link>
           <input
             type="number"
-            placeholder="₦ stake"
+            placeholder="🪙 stake"
             style={{ width: 90 }}
             value={stakeInputs[p.id] ?? ""}
             onChange={(e) =>

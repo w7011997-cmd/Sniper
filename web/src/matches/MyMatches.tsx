@@ -77,7 +77,7 @@ function MatchRow({ match, onChange }: { match: MyMatch; onChange: () => void })
   return (
     <div style={{ padding: "12px 0", borderBottom: "1px solid var(--border)" }}>
       <div>
-        vs {match.opponentName} — ₦{(match.stake_cents / 100).toFixed(2)} pot
+        vs {match.opponentName} — 🪙{(match.stake_cents / 100).toFixed(2)} pot
       </div>
       <div className="stat-secondary">{match.status}</div>
       {message && <p role="alert">{message}</p>}
