@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "662418652685",
+    "project_id": "sniper-c1dc0",
+    "storage_bucket": "sniper-c1dc0.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:662418652685:android:e290694b83d404fab51f44",
+        "android_client_info": {
+          "package_name": "com.ops.sniper"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDHsH7IuW1QKDK9xdkwPmD9x-E9ysIFDFI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
