@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "../shared/supabaseClient";
 import { usePushRegistration } from "../push/usePushRegistration";
 import { useProfileData } from "./useProfileData";
@@ -66,7 +66,7 @@ export default function ProfilePage() {
           </div>
           <div className="chevron">›</div>
         </div>
-        <div className="profile-row">
+        <Link to="/wallet" className="profile-row" style={{ textDecoration: "none", color: "inherit" }}>
           <div className="profile-row-icon">👛</div>
           <div style={{ flex: 1 }}>
             <div className="stat-secondary">WALLET BALANCE</div>
@@ -75,7 +75,7 @@ export default function ProfilePage() {
             </div>
           </div>
           <div className="chevron">›</div>
-        </div>
+        </Link>
       </div>
 
       <div className="profile-card">
