@@ -1,0 +1,78 @@
+import { useState, type FormEvent } from "react";
+import { supabase } from "../shared/supabaseClient";
+
+export default function AuthForm() {
+  const [mode, setMode] = useState<"signin" | "signup">("signin");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [username, setUsername] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+
+  async function handleSubmit(e: FormEvent) {
+    e.preventDefault();
+    setError(null);
+    setBusy(true);
+
+    if (mode === "signup") {
+      const { error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: { data: { username } },
+      });
+      if (error) setError(error.message);
+    } else {
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) setError(error.message);
+    }
+
+    setBusy(false);
+  }
+
+  return (
+    <div>
+      <h2>{mode === "signup" ? "Create account" : "Sign in"}</h2>
+      <form onSubmit={handleSubmit}>
+        {mode === "signup" && (
+          <div>
+            <label htmlFor="username">Username</label>
+            <input
+              id="username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              required
+            />
+          </div>
+        )}
+        <div>
+          <label htmlFor="email">Email</label>
+          <input
+            id="email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+        </div>
+        <div>
+          <label htmlFor="password">Password</label>
+          <input
+            id="password"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            minLength={6}
+          />
+        </div>
+        {error && <p role="alert">{error}</p>}
+        <button type="submit" disabled={busy}>
+          {busy ? "Please wait..." : mode === "signup" ? "Sign up" : "Sign in"}
+        </button>
+      </form>
+      <button type="button" onClick={() => setMode(mode === "signup" ? "signin" : "signup")}>
+        {mode === "signup" ? "Already have an account? Sign in" : "Need an account? Sign up"}
+      </button>
+    </div>
+  );
+}
