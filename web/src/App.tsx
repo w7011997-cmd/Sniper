@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
 import { AuthProvider, useAuth } from "./auth/AuthContext";
 import AuthForm from "./auth/AuthForm";
 import { supabase } from "./shared/supabaseClient";
+import { usePushRegistration } from "./push/usePushRegistration";
 
 function Home() {
   const { session } = useAuth();

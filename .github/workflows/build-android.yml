@@ -41,13 +41,6 @@ jobs:
       - name: Sync Capacitor
         run: npx cap sync android
 
-      - name: Show Gradle files
-        run: |
-          echo "----- android/build.gradle -----"
-          cat android/build.gradle
-          echo "----- android/app/build.gradle -----"
-          cat android/app/build.gradle
-
       - name: Add Firebase config
         run: cp firebase/google-services.json android/app/google-services.json
 
