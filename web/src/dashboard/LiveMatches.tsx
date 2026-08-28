@@ -33,7 +33,7 @@ function MatchCard({ match, onBet }: { match: LiveMatch; onBet: (m: LiveMatch, b
         </div>
       </div>
       <p className="stat-secondary" style={{ textAlign: "center" }}>
-        Stake: 🪙{(match.stake_cents / 100).toFixed(2)} each
+        Round {match.current_round}/{match.rounds} — Stake: 🪙{(match.stake_cents / 100).toFixed(2)} each
       </p>
       <div className="bet-row">
         <button className="bet-btn bet-btn-a" onClick={() => onBet(match, match.player_a)}>
