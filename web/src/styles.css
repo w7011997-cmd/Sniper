@@ -411,3 +411,58 @@ a:hover {
   font-weight: 700;
   margin-top: 8px;
 }
+
+.profile-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: var(--bg);
+}
+
+.icon-circle-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  padding: 0;
+}
+
+.quicklinks-row {
+  flex-wrap: wrap;
+}
+
+.quick-link {
+  min-width: 0;
+  flex: 1 1 30%;
+  box-sizing: border-box;
+}
+
+.quick-link-title,
+.quick-link .stat-secondary {
+  overflow-wrap: break-word;
+}
+
+.activity-columns {
+  min-width: 0;
+}
+
+.profile-card,
+.activity-columns > * {
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+body,
+.app-content {
+  overflow-x: hidden;
+}
+
+.player-link {
+  color: var(--text);
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.player-link:hover {
+  text-decoration: underline;
+}
