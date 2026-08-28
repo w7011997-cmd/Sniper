@@ -10,6 +10,8 @@ interface PlayerRow {
   rating_count: number;
   wins: number;
   losses: number;
+  is_online: boolean;
+  in_active_match: boolean;
 }
 
 type FilterMode = "all" | "top_rated" | "new_players" | "most_wins";
@@ -21,17 +23,22 @@ export default function FindOpponent() {
   const [filter, setFilter] = useState<FilterMode>("all");
   const [message, setMessage] = useState<string | null>(null);
 
-  useEffect(() => {
-    supabase
+  async function load() {
+    const { data } = await supabase
       .from("player_stats")
-      .select("player_id, username, avg_rating, rating_count, wins, losses")
-      .then(({ data }) => {
-        setPlayers((data ?? []).filter((p) => p.player_id !== session?.user.id));
-      });
+      .select("player_id, username, avg_rating, rating_count, wins, losses, is_online, in_active_match");
+    setPlayers((data ?? []).filter((p) => p.player_id !== session?.user.id));
+  }
+
+  useEffect(() => {
+    load();
+    const interval = setInterval(load, 30_000);
+    return () => clearInterval(interval);
   }, [session]);
 
-  const topRatedCount = useMemo(
-    () => players.filter((p) => p.rating_count > 0 && p.avg_rating >= 4).length,
+  const onlineCount = useMemo(() => players.filter((p) => p.is_online).length, [players]);
+  const availableCount = useMemo(
+    () => players.filter((p) => p.is_online && !p.in_active_match).length,
     [players]
   );
 
@@ -71,13 +78,15 @@ export default function FindOpponent() {
 
       <div className="fo-stats-banner">
         <div>
-          <div className="fo-stat-number">{players.length}</div>
-          <div className="fo-stat-label">Players</div>
+          <div className="fo-stat-number">
+            {onlineCount} <span className="fo-online-dot" />
+          </div>
+          <div className="fo-stat-label">Online</div>
         </div>
         <div className="fo-stats-divider" />
         <div>
-          <div className="fo-stat-number">{topRatedCount}</div>
-          <div className="fo-stat-label">Top Rated</div>
+          <div className="fo-stat-number">{availableCount}</div>
+          <div className="fo-stat-label">Ready to Play</div>
         </div>
       </div>
 
@@ -119,7 +128,10 @@ export default function FindOpponent() {
 
       {visible.map((p) => (
         <div key={p.player_id} className="fo-card">
-          <div className="fo-avatar">{p.username.charAt(0).toUpperCase()}</div>
+          <div className="fo-avatar">
+            {p.username.charAt(0).toUpperCase()}
+            {p.is_online && <span className="fo-avatar-dot" />}
+          </div>
           <div className="fo-info">
             <div className="fo-username">{p.username}</div>
             <div className="fo-substats">
@@ -134,9 +146,13 @@ export default function FindOpponent() {
             <div className="fo-trophy-number">{p.wins}</div>
             <div className="fo-stat-label">Wins</div>
           </div>
-          <button className="fo-challenge-btn" onClick={() => sendChallenge(p.player_id)}>
-            Challenge
-          </button>
+          {p.in_active_match ? (
+            <span className="fo-in-match">In a match</span>
+          ) : (
+            <button className="fo-challenge-btn" onClick={() => sendChallenge(p.player_id)}>
+              Challenge
+            </button>
+          )}
         </div>
       ))}
     </div>

@@ -21,11 +21,13 @@ function MatchesPage() {
   );
 }
 
+import { usePresenceHeartbeat } from "./shared/usePresenceHeartbeat";
 function Gate() {
   const { session, loading } = useAuth();
 
   if (loading) return <p>Loading...</p>;
   if (!session) return <AuthForm />;
+  usePresenceHeartbeat();
 
   return (
     <div className="app-shell">
