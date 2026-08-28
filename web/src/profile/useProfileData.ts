@@ -53,6 +53,7 @@ export function useProfileData(): ProfileData {
   useEffect(() => {
     if (!session) return;
     const uid = session.user.id;
+    const userEmail = session.user.email ?? "";
 
     async function load() {
       const [{ data: profile }, { data: wallet }, { data: stats }, { data: matches }] = await Promise.all([
@@ -97,7 +98,7 @@ export function useProfileData(): ProfileData {
 
       setState({
         username: profile?.username ?? "",
-        email: session.user.email ?? "",
+        email: userEmail,
         createdAt: profile?.created_at ?? null,
         balanceCents: wallet?.balance_cents ?? null,
         wins: stats?.wins ?? 0,
