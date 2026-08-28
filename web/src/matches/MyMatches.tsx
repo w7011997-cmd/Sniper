@@ -53,24 +53,43 @@ function MatchRow({ match, onChange }: { match: MyMatch; onChange: () => void })
   const { session } = useAuth();
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
+  const myScore = match.iAmPlayerA ? match.score_a : match.score_b;
+  const oppScore = match.iAmPlayerA ? match.score_b : match.score_a;
 
-  async function reportResult(iWon: boolean) {
+  async function reportRound(iWonRound: boolean) {
     setBusy(true);
-    const winnerId = iWon ? session?.user.id : match.iAmPlayerA ? match.player_b : match.player_a;
-    const { data, error } = await supabase.rpc("report_match_result", {
+    const winnerId = iWonRound
+      ? session?.user.id
+      : match.iAmPlayerA
+      ? match.player_b
+      : match.player_a;
+    const { data, error } = await supabase.rpc("report_round_result", {
       p_match_id: match.id,
-      p_winner_id: winnerId,
+      p_round_winner: winnerId,
     });
     setBusy(false);
     setMessage(
       error
         ? error.message
         : data === "settled"
-        ? "Match settled."
+        ? "Match complete — settled."
+        : data === "tied_disputed"
+        ? "Match ended tied — flagged for manual review."
         : data === "disputed"
         ? "Your report doesn't match your opponent's — marked as disputed."
-        : "Result recorded — waiting on your opponent to confirm."
+        : data === "round_recorded"
+        ? "Round recorded — on to the next one."
+        : "Waiting on your opponent to confirm this round."
     );
+    onChange();
+  }
+
+  async function forfeit() {
+    if (!window.confirm("Forfeit this match? Your opponent gets the pot minus the house cut.")) return;
+    setBusy(true);
+    const { error } = await supabase.rpc("forfeit_match", { p_match_id: match.id });
+    setBusy(false);
+    setMessage(error ? error.message : "Match forfeited.");
     onChange();
   }
 
@@ -79,16 +98,23 @@ function MatchRow({ match, onChange }: { match: MyMatch; onChange: () => void })
       <div>
         vs {match.opponentName} — 🪙{(match.stake_cents / 100).toFixed(2)} pot
       </div>
-      <div className="stat-secondary">{match.status}</div>
+      <div className="stat-secondary">
+        {match.status}
+        {match.status === "in_progress" &&
+          ` — round ${match.current_round}/${match.rounds}, score ${myScore}-${oppScore}`}
+      </div>
       {message && <p role="alert">{message}</p>}
 
       {match.status === "in_progress" && (
-        <div style={{ display: "flex", gap: 8, marginTop: 6 }}>
-          <button type="button" disabled={busy} onClick={() => reportResult(true)}>
-            I won
+        <div style={{ display: "flex", gap: 8, marginTop: 6, flexWrap: "wrap" }}>
+          <button type="button" disabled={busy} onClick={() => reportRound(true)}>
+            I won this round
           </button>
-          <button type="button" disabled={busy} onClick={() => reportResult(false)}>
-            I lost
+          <button type="button" disabled={busy} onClick={() => reportRound(false)}>
+            I lost this round
+          </button>
+          <button type="button" disabled={busy} onClick={forfeit} style={{ color: "var(--danger)" }}>
+            Forfeit match
           </button>
         </div>
       )}

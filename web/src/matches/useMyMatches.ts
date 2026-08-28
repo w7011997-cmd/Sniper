@@ -9,6 +9,10 @@ export interface MyMatch {
   player_a: string;
   player_b: string;
   winner_id: string | null;
+  rounds: number;
+  score_a: number;
+  score_b: number;
+  current_round: number;
   opponentName: string;
   iAmPlayerA: boolean;
   alreadyRated: boolean;
@@ -24,7 +28,7 @@ export function useMyMatches() {
 
     const { data: rawMatches } = await supabase
       .from("matches")
-      .select("id, status, stake_cents, player_a, player_b, winner_id")
+      .select("id, status, stake_cents, player_a, player_b, winner_id, rounds, score_a, score_b, current_round")
       .in("status", ["in_progress", "completed"])
       .or(`player_a.eq.${uid},player_b.eq.${uid}`)
       .order("started_at", { ascending: false });
