@@ -1,145 +1,161 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { useAuth } from "../auth/AuthContext";
+import { useState } from "react";
+import { Link } from "react-router-dom";
+import { ChevronLeft, Coins as CoinsIcon, Gift } from "lucide-react";
+import { Browser } from "@capacitor/browser";
+import { Capacitor } from "@capacitor/core";
 import { supabase } from "../shared/supabaseClient";
 import { useWallet } from "./useWallet";
+import "../profile/profile.css";
+import "./wallet.css";
 
-interface Withdrawal {
-  id: string;
-  coins_cents: number;
-  status: string;
-  created_at: string;
-}
+const CURRENCIES = ["NGN", "USD", "GBP", "EUR", "GHS", "KES", "ZAR"];
+const GIFT_CARD_BRANDS = ["Amazon", "Google Play", "Steam", "iTunes"];
 
 export default function WalletPage() {
-  const { session } = useAuth();
-  const navigate = useNavigate();
-  const { balanceCents, refresh } = useWallet();
+  const { balanceCents } = useWallet();
+
   const [fundAmount, setFundAmount] = useState("");
-  const [withdrawAmount, setWithdrawAmount] = useState("");
-  const [message, setMessage] = useState<string | null>(null);
-  const [busy, setBusy] = useState(false);
-  const [withdrawals, setWithdrawals] = useState<Withdrawal[]>([]);
+  const [fundCurrency, setFundCurrency] = useState("NGN");
+  const [funding, setFunding] = useState(false);
+  const [fundMessage, setFundMessage] = useState<string | null>(null);
 
-  async function loadWithdrawals() {
-    const { data } = await supabase
-      .from("withdrawal_requests")
-      .select("id, coins_cents, status, created_at")
-      .eq("user_id", session?.user.id ?? "")
-      .order("created_at", { ascending: false })
-      .limit(10);
-    setWithdrawals(data ?? []);
-  }
-
-  useEffect(() => {
-    loadWithdrawals();
-  }, [session?.user.id]);
+  const [withdrawCoins, setWithdrawCoins] = useState("");
+  const [withdrawBrand, setWithdrawBrand] = useState(GIFT_CARD_BRANDS[0]);
+  const [withdrawing, setWithdrawing] = useState(false);
+  const [withdrawMessage, setWithdrawMessage] = useState<string | null>(null);
 
   async function handleFund() {
-    const coins = Number(fundAmount);
-    if (!fundAmount || isNaN(coins) || coins <= 0) return;
+    const value = Number(fundAmount);
+    if (!value || value <= 0) {
+      setFundMessage("Enter a valid amount.");
+      return;
+    }
 
-    setBusy(true);
-    setMessage(null);
+    setFunding(true);
+    setFundMessage(null);
+
     const { data, error } = await supabase.functions.invoke("initialize-topup", {
-      body: { coins_cents: Math.round(coins * 100) },
+      body: { amount: value, currency: fundCurrency },
     });
-    setBusy(false);
 
-    if (error) {
-      setMessage(error.message);
-    } else if (data?.stub) {
-      setMessage(data.message);
-    } else if (data?.authorization_url) {
-      window.location.href = data.authorization_url;
+    setFunding(false);
+
+    if (error || data?.error) {
+      setFundMessage(data?.error ?? error?.message ?? "Could not start payment.");
+      return;
+    }
+
+    if (data?.stub) {
+      setFundMessage(data.message);
+      return;
+    }
+
+    const url = data.authorization_url as string;
+    if (Capacitor.isNativePlatform()) {
+      await Browser.open({ url });
+    } else {
+      window.open(url, "_blank");
     }
   }
 
   async function handleWithdraw() {
-    const coins = Number(withdrawAmount);
-    if (!withdrawAmount || isNaN(coins) || coins <= 0) return;
+    const value = Number(withdrawCoins);
+    if (!value || value <= 0) {
+      setWithdrawMessage("Enter a valid coin amount.");
+      return;
+    }
 
-    setBusy(true);
-    setMessage(null);
+    setWithdrawing(true);
+    setWithdrawMessage(null);
+
     const { error } = await supabase.rpc("request_withdrawal", {
-      p_coins_cents: Math.round(coins * 100),
+      p_coins_cents: Math.round(value * 100),
+      p_gift_card_brand: withdrawBrand,
     });
-    setBusy(false);
-    setMessage(error ? error.message : "Withdrawal requested — you'll be notified once it's processed.");
-    setWithdrawAmount("");
-    refresh();
-    loadWithdrawals();
-  }
 
-  async function handleCancel(id: string) {
-    const { error } = await supabase.rpc("cancel_withdrawal", { p_request_id: id });
-    setMessage(error ? error.message : "Withdrawal cancelled — coins returned to your wallet.");
-    refresh();
-    loadWithdrawals();
+    setWithdrawing(false);
+    setWithdrawMessage(
+      error ? error.message : "Withdrawal requested — you'll get your gift card code once it's processed."
+    );
+    if (!error) setWithdrawCoins("");
   }
 
   return (
-    <div className="profile-page">
-      <div className="profile-topbar">
-        <button className="icon-circle-btn" onClick={() => navigate(-1)}>‹</button>
-        <h2 style={{ margin: 0 }}>WALLET</h2>
-        <div style={{ width: 36 }} />
+    <div className="profile2">
+      <div className="wallet-header">
+        <Link to="/profile" className="wallet-back-btn">
+          <ChevronLeft size={20} />
+        </Link>
+        <h1 className="wallet-title">Wallet</h1>
+        <div style={{ width: 40 }} />
       </div>
 
-      <div className="profile-card" style={{ textAlign: "center" }}>
-        <div className="stat-secondary">BALANCE</div>
-        <div style={{ fontSize: 32, fontWeight: 800, color: "#22c55e" }}>
-          🪙{balanceCents !== null ? (balanceCents / 100).toFixed(2) : "..."}
+      <div className="p2-card wallet-balance-card">
+        <div className="p2-stat-label">Balance</div>
+        <div className="wallet-balance-value">
+          <span className="wallet-coin-emoji">🪙</span>
+          <span className="p2-green">
+            {balanceCents !== null ? (balanceCents / 100).toFixed(2) : "..."}
+          </span>
         </div>
       </div>
 
-      {message && <p role="alert">{message}</p>}
+      <div className="p2-card">
+        <div className="p2-section-title">
+          <CoinsIcon size={16} />
+          Fund Wallet
+        </div>
 
-      <div className="profile-card">
-        <div className="section-title">🪙 FUND WALLET</div>
-        <input
-          type="number"
-          placeholder="Amount in ₦"
-          value={fundAmount}
-          onChange={(e) => setFundAmount(e.target.value)}
-          style={{ width: "100%", marginBottom: 8 }}
-        />
-        <button type="button" disabled={busy} onClick={handleFund} style={{ width: "100%" }}>
-          Fund with Paystack
+        <div className="wallet-input-row">
+          <input
+            type="number"
+            placeholder="Amount"
+            value={fundAmount}
+            onChange={(e) => setFundAmount(e.target.value)}
+          />
+          <select value={fundCurrency} onChange={(e) => setFundCurrency(e.target.value)}>
+            {CURRENCIES.map((c) => (
+              <option key={c} value={c}>
+                {c}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {fundMessage && <p role="alert">{fundMessage}</p>}
+
+        <button type="button" disabled={funding} onClick={handleFund}>
+          {funding ? "Starting..." : "Fund Wallet"}
         </button>
       </div>
 
-      <div className="profile-card">
-        <div className="section-title">💸 WITHDRAW</div>
-        <input
-          type="number"
-          placeholder="Amount in coins"
-          value={withdrawAmount}
-          onChange={(e) => setWithdrawAmount(e.target.value)}
-          style={{ width: "100%", marginBottom: 8 }}
-        />
-        <button type="button" disabled={busy} onClick={handleWithdraw} style={{ width: "100%" }}>
-          Request withdrawal
-        </button>
+      <div className="p2-card">
+        <div className="p2-section-title">
+          <Gift size={16} />
+          Withdraw
+        </div>
 
-        {withdrawals.length > 0 && (
-          <div style={{ marginTop: 16 }}>
-            {withdrawals.map((w) => (
-              <div className="activity-item" key={w.id}>
-                <div>💸</div>
-                <div style={{ flex: 1 }}>
-                  <div>🪙{(w.coins_cents / 100).toFixed(2)}</div>
-                  <div className="stat-secondary">{w.status}</div>
-                </div>
-                {w.status === "pending" && (
-                  <button type="button" onClick={() => handleCancel(w.id)}>
-                    Cancel
-                  </button>
-                )}
-              </div>
+        <div className="wallet-input-row">
+          <input
+            type="number"
+            placeholder="Amount in coins"
+            value={withdrawCoins}
+            onChange={(e) => setWithdrawCoins(e.target.value)}
+          />
+          <select value={withdrawBrand} onChange={(e) => setWithdrawBrand(e.target.value)}>
+            {GIFT_CARD_BRANDS.map((b) => (
+              <option key={b} value={b}>
+                {b}
+              </option>
             ))}
-          </div>
-        )}
+          </select>
+        </div>
+
+        {withdrawMessage && <p role="alert">{withdrawMessage}</p>}
+
+        <button type="button" disabled={withdrawing} onClick={handleWithdraw}>
+          {withdrawing ? "Requesting..." : "Request withdrawal"}
+        </button>
       </div>
     </div>
   );
