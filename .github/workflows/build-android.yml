@@ -41,6 +41,9 @@ jobs:
       - name: Sync Capacitor
         run: npx cap sync android
 
+      - name: Add Firebase config
+        run: cp firebase/google-services.json android/app/google-services.json
+
       - name: Build debug APK
         working-directory: web/android
         run: ./gradlew assembleDebug
