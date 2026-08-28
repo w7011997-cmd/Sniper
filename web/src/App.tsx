@@ -5,6 +5,7 @@ import BottomNav from "./nav/BottomNav";
 import LiveMatches from "./dashboard/LiveMatches";
 import IncomingChallenges from "./challenges/IncomingChallenges";
 import PlayerList from "./challenges/PlayerList";
+import MyMatches from "./matches/MyMatches";
 import RankingsPage from "./rankings/RankingsPage";
 import MessagesPage from "./messages/MessagesPage";
 import ProfilePage from "./profile/ProfilePage";
@@ -14,6 +15,7 @@ function MatchesPage() {
     <div>
       <h1>Matches</h1>
       <IncomingChallenges />
+      <MyMatches />
       <PlayerList />
     </div>
   );

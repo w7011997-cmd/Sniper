@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useAuth } from "../auth/AuthContext";
 import { supabase } from "../shared/supabaseClient";
 import { useLiveMatches, type LiveMatch } from "./useLiveMatches";
 
@@ -49,7 +48,6 @@ function MatchCard({ match, onBet }: { match: LiveMatch; onBet: (m: LiveMatch, b
 }
 
 export default function LiveMatches() {
-  const { session } = useAuth();
   const { matches, loading, refresh } = useLiveMatches();
   const [message, setMessage] = useState<string | null>(null);
 
@@ -58,11 +56,10 @@ export default function LiveMatches() {
     const naira = Number(raw);
     if (!raw || isNaN(naira) || naira <= 0) return;
 
-    const { error } = await supabase.from("spectator_bets").insert({
-      match_id: match.id,
-      bettor_id: session?.user.id,
-      backed_player: backedPlayer,
-      amount_cents: Math.round(naira * 100),
+    const { error } = await supabase.rpc("place_spectator_bet", {
+      p_match_id: match.id,
+      p_backed_player: backedPlayer,
+      p_amount_cents: Math.round(naira * 100),
     });
 
     setMessage(error ? error.message : "Bet placed.");
