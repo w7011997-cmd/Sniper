@@ -4,20 +4,23 @@
   border-radius: 10px;
   margin-top: 16px;
   overflow: hidden;
+  min-height: calc(100vh - 220px);
+  display: flex;
+  flex-direction: column;
 }
 
 .term-titlebar {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   background: var(--surface);
-  padding: 10px 12px;
+  padding: 14px 16px;
   border-bottom: 1px solid var(--border);
 }
 
 .term-dot {
-  width: 10px;
-  height: 10px;
+  width: 13px;
+  height: 13px;
   border-radius: 50%;
 }
 
@@ -35,19 +38,20 @@
 
 .term-titletext {
   margin-left: 8px;
-  font-size: 12px;
+  font-size: 15px;
   color: var(--text-secondary);
 }
 
 .term-body {
-  padding: 16px;
-  font-size: 14px;
-  line-height: 1.6;
+  padding: 24px 20px;
+  font-size: 19px;
+  line-height: 1.7;
+  flex: 1;
 }
 
 .term-line {
   color: var(--text-secondary);
-  margin-top: 14px;
+  margin-top: 28px;
 }
 
 .term-line:first-child {
@@ -60,7 +64,9 @@
 
 .term-value {
   color: var(--text);
-  padding-left: 16px;
+  padding-left: 20px;
+  font-size: 21px;
+  margin-top: 6px;
 }
 
 .term-accent-green {
@@ -78,7 +84,7 @@
   color: #f4212e;
   cursor: pointer;
   padding: 0;
-  font-size: 14px;
+  font-size: 19px;
 }
 
 .term-btn:disabled {
@@ -86,13 +92,13 @@
 }
 
 .term-cursor-line {
-  margin-top: 14px;
+  margin-top: 28px;
 }
 
 .term-cursor {
   display: inline-block;
-  width: 8px;
-  height: 14px;
+  width: 11px;
+  height: 20px;
   background: #39ff88;
   animation: term-blink 1s step-end infinite;
   vertical-align: middle;
