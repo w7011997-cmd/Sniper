@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { useAuth } from "../auth/AuthContext";
 import { supabase } from "../shared/supabaseClient";
 import { useMyMatches, type MyMatch } from "./useMyMatches";
@@ -103,6 +104,13 @@ function MatchRow({ match, onChange }: { match: MyMatch; onChange: () => void })
         {match.status === "in_progress" &&
           ` — round ${match.current_round}/${match.rounds}, score ${myScore}-${oppScore}`}
       </div>
+
+      {match.status === "in_progress" && (
+        <Link to={`/match/${match.id}`} style={{ color: "var(--accent)", display: "inline-block", marginTop: 6 }}>
+          Play match →
+        </Link>
+      )}
+
       {message && <p role="alert">{message}</p>}
 
       {match.status === "in_progress" && (

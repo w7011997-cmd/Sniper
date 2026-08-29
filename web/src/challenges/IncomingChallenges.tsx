@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../auth/AuthContext";
 import { supabase } from "../shared/supabaseClient";
 
@@ -10,6 +11,7 @@ interface IncomingChallenge {
 
 export default function IncomingChallenges() {
   const { session } = useAuth();
+  const navigate = useNavigate();
   const [challenges, setChallenges] = useState<IncomingChallenge[]>([]);
   const [busyId, setBusyId] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
@@ -31,12 +33,24 @@ export default function IncomingChallenges() {
     setBusyId(id);
     setMessage(null);
 
-    const { error } = accept
-      ? await supabase.rpc("accept_challenge", { challenge_id: id })
-      : await supabase.rpc("decline_challenge", { challenge_id: id });
+    if (accept) {
+      const { data, error } = await supabase.rpc("accept_challenge", { challenge_id: id });
+      setBusyId(null);
+      if (error) {
+        setMessage(error.message);
+        return;
+      }
+      if (data) {
+        navigate(`/match/${data}`);
+        return;
+      }
+      load();
+      return;
+    }
 
+    const { error } = await supabase.rpc("decline_challenge", { challenge_id: id });
     setBusyId(null);
-    setMessage(error ? error.message : accept ? "Challenge accepted — match started." : "Challenge declined.");
+    setMessage(error ? error.message : "Challenge declined.");
     load();
   }
 
