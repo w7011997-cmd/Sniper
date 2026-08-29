@@ -3,7 +3,7 @@ import { useAuth } from "../auth/AuthContext";
 import { supabase } from "../shared/supabaseClient";
 import { useMyMatches, type MyMatch } from "./useMyMatches";
 
-function RatingForm({ match, onDone }: { match: MyMatch; onDone: () => void }) {
+export function RatingForm({ match, onDone }: { match: MyMatch; onDone: () => void }) {
   const [stars, setStars] = useState(5);
   const [comment, setComment] = useState("");
   const [busy, setBusy] = useState(false);
