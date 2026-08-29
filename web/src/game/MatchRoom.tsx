@@ -62,6 +62,18 @@ export default function MatchRoom() {
 
   useEffect(() => {
     load();
+    if (!id) return;
+    const channel = supabase
+      .channel(`match-${id}`)
+      .on(
+        "postgres_changes",
+        { event: "UPDATE", schema: "public", table: "matches", filter: `id=eq.${id}` },
+        () => load()
+      )
+      .subscribe();
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, [id, session?.user.id]);
 
   async function reportRound(iWonRound: boolean) {
@@ -165,7 +177,7 @@ export default function MatchRoom() {
       <iframe
         src={embedUrl}
         title="Billiards match"
-        style={{ width: "100%", height: "60vh", border: "1px solid var(--border)", borderRadius: 12 }}
+        style={{ width: "100%", height: "72vh", border: "1px solid var(--border)", borderRadius: 12 }}
         allow="fullscreen; autoplay"
       />
 
