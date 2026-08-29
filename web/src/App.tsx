@@ -11,6 +11,8 @@ import MessagesPage from "./messages/MessagesPage";
 import ProfilePage from "./profile/ProfilePage";
 import PlayerProfilePage from "./players/PlayerProfilePage";
 import WalletPage from "./wallet/WalletPage";
+import MatchRoom from "./game/MatchRoom";
+import { usePresenceHeartbeat } from "./shared/usePresenceHeartbeat";
 
 function MatchesPage() {
   return (
@@ -23,7 +25,6 @@ function MatchesPage() {
   );
 }
 
-import { usePresenceHeartbeat } from "./shared/usePresenceHeartbeat";
 function Gate() {
   const { session, loading } = useAuth();
 
@@ -42,6 +43,7 @@ function Gate() {
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/players/:id" element={<PlayerProfilePage />} />
           <Route path="/wallet" element={<WalletPage />} />
+          <Route path="/match/:id" element={<MatchRoom />} />
         </Routes>
       </div>
       <BottomNav />
