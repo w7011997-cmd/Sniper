@@ -64,9 +64,9 @@ function MatchRow({ match, onChange }: { match: MyMatch; onChange: () => void })
       : match.iAmPlayerA
       ? match.player_b
       : match.player_a;
-    const { data, error } = await supabase.rpc("report_round_result", {
+    const { data, error } = await supabase.rpc("report_match_result", {
       p_match_id: match.id,
-      p_round_winner: winnerId,
+      p_winner: winnerId,
     });
     setBusy(false);
     setMessage(
@@ -74,13 +74,9 @@ function MatchRow({ match, onChange }: { match: MyMatch; onChange: () => void })
         ? error.message
         : data === "settled"
         ? "Match complete — settled."
-        : data === "tied_disputed"
-        ? "Match ended tied — flagged for manual review."
         : data === "disputed"
         ? "Your report doesn't match your opponent's — marked as disputed."
-        : data === "round_recorded"
-        ? "Round recorded — on to the next one."
-        : "Waiting on your opponent to confirm this round."
+        : "Waiting on your opponent to confirm the result."
     );
     onChange();
   }
