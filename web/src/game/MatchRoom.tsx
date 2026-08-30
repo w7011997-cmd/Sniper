@@ -221,12 +221,6 @@ export default function MatchRoom() {
 
       {isPlayer && match.status === "in_progress" && (
         <div style={{ display: "flex", gap: 8, marginTop: 12, flexWrap: "wrap" }}>
-          <button type="button" disabled={busy} onClick={() => reportRound(true)}>
-            I won this round
-          </button>
-          <button type="button" disabled={busy} onClick={() => reportRound(false)}>
-            I lost this round
-          </button>
           <button type="button" disabled={busy} onClick={forfeit} style={{ color: "var(--danger)" }}>
             Forfeit match
           </button>
