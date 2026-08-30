@@ -104,6 +104,22 @@ export default function MatchRoom() {
     load();
   }
 
+  async function sendRematch() {
+    if (!match || !session) return;
+    const oppId = isPlayerA ? match.player_b : match.player_a;
+    const raw = window.prompt("Stake amount (🪙) for the rematch?");
+    const naira = Number(raw);
+    if (!raw || isNaN(naira) || naira <= 0) return;
+    setBusy(true);
+    const { error } = await supabase.from("challenges").insert({
+      challenger_id: session.user.id,
+      opponent_id: oppId,
+      stake_cents: Math.round(naira * 100),
+    });
+    setBusy(false);
+    setMessage(error ? error.message : "Rematch challenge sent.");
+  }
+
   async function forfeit() {
     if (!match) return;
     if (!window.confirm("Forfeit this match? Your opponent gets the pot minus the house cut.")) return;
@@ -231,6 +247,11 @@ export default function MatchRoom() {
       )}
       {isPlayer && match.status === "completed" && alreadyRated && (
         <p className="stat-secondary">You rated this match.</p>
+      )}
+      {isPlayer && match.status === "completed" && isPlayerA && (
+        <button type="button" disabled={busy} onClick={sendRematch} style={{ marginTop: 8 }}>
+          Send rematch
+        </button>
       )}
 
       {isPlayerA && match.status === "completed" && (
