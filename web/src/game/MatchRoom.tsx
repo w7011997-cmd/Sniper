@@ -159,7 +159,7 @@ export default function MatchRoom() {
     <div>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
         <Link to="/matches" className="stat-secondary">← Back</Link>
-        <div className="stat-secondary">🪙{(match.stake_cents / 100).toFixed(2)} pot</div>
+        <div className="stat-secondary">🪙{(match.stake_cents / 100).toFixed(2)}</div>
       </div>
 
       <h1 style={{ fontSize: 20 }}>
