@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useAuth } from "../auth/AuthContext";
 import { supabase } from "../shared/supabaseClient";
@@ -132,6 +132,27 @@ export default function MatchRoom() {
     setBusy(false);
     setMessage(error ? error.message : "Rematch request sent.");
   }
+
+  const matchRef = useRef(match);
+  matchRef.current = match;
+  const reportRoundRef = useRef(reportRound);
+  reportRoundRef.current = reportRound;
+  const reportedRoundRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    function handleMessage(event: MessageEvent) {
+      if (event.data?.type !== "sniper-match-complete") return;
+      const m = matchRef.current;
+      if (!m || !session) return;
+      const isPlayerNow = session.user.id === m.player_a || session.user.id === m.player_b;
+      if (!isPlayerNow) return;
+      if (reportedRoundRef.current === m.current_round) return;
+      reportedRoundRef.current = m.current_round;
+      reportRoundRef.current(Boolean(event.data.amIWinner));
+    }
+    window.addEventListener("message", handleMessage);
+    return () => window.removeEventListener("message", handleMessage);
+  }, [session]);
 
   if (!match || !session) {
     return (
