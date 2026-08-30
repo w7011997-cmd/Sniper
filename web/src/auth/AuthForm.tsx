@@ -1,11 +1,13 @@
 import { useState, type FormEvent } from "react";
 import { supabase } from "../shared/supabaseClient";
+import { COUNTRIES } from "../shared/countries";
 
 export default function AuthForm() {
   const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
+  const [country, setCountry] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
@@ -18,6 +20,11 @@ export default function AuthForm() {
       const trimmedUsername = username.trim();
       if (!trimmedUsername) {
         setError("Username is required.");
+        setBusy(false);
+        return;
+      }
+      if (!country) {
+        setError("Please select your country.");
         setBusy(false);
         return;
       }
@@ -37,7 +44,7 @@ export default function AuthForm() {
       const { error } = await supabase.auth.signUp({
         email,
         password,
-        options: { data: { username: trimmedUsername } },
+        options: { data: { username: trimmedUsername, country } },
       });
 
       if (error) {
@@ -68,6 +75,26 @@ export default function AuthForm() {
               onChange={(e) => setUsername(e.target.value)}
               required
             />
+          </div>
+        )}
+        {mode === "signup" && (
+          <div>
+            <label htmlFor="country">Country</label>
+            <select
+              id="country"
+              value={country}
+              onChange={(e) => setCountry(e.target.value)}
+              required
+            >
+              <option value="" disabled>
+                Select your country
+              </option>
+              {COUNTRIES.map((c) => (
+                <option key={c.code} value={c.code}>
+                  {c.name}
+                </option>
+              ))}
+            </select>
           </div>
         )}
         <div>
