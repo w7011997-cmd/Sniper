@@ -138,7 +138,7 @@ export default function MatchRoom() {
   const params = new URLSearchParams({
     tableId: match.id,
     websocketserver: RELAY_URL,
-    ruletype: "snooker",
+    ruletype: "sniperpool",
   });
 
   if (isPlayer) {
