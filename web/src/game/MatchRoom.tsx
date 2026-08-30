@@ -118,6 +118,21 @@ export default function MatchRoom() {
     load();
   }
 
+  async function requestRematch() {
+    if (!match) return;
+    const raw = window.prompt("Stake amount for the rematch (coins)?");
+    const coins = Number(raw);
+    if (!raw || isNaN(coins) || coins <= 0) return;
+
+    setBusy(true);
+    const { error } = await supabase.rpc("request_rematch", {
+      p_match_id: match.id,
+      p_stake_cents: Math.round(coins * 100),
+    });
+    setBusy(false);
+    setMessage(error ? error.message : "Rematch request sent.");
+  }
+
   if (!match || !session) {
     return (
       <div>
@@ -205,6 +220,12 @@ export default function MatchRoom() {
       )}
       {isPlayer && match.status === "completed" && alreadyRated && (
         <p className="stat-secondary">You rated this match.</p>
+      )}
+
+      {isPlayerA && match.status === "completed" && (
+        <button type="button" disabled={busy} onClick={requestRematch} style={{ marginTop: 12 }}>
+          Request rematch
+        </button>
       )}
     </div>
   );
