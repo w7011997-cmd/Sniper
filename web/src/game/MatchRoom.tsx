@@ -227,6 +227,7 @@ export default function MatchRoom() {
         title="Billiards match"
         style={{ width: "100%", height: "72vh", border: "1px solid var(--border)", borderRadius: 12 }}
         allow="fullscreen; autoplay"
+        sandbox="allow-scripts allow-same-origin allow-forms"
       />
 
       {message && <p role="alert" style={{ marginTop: 8 }}>{message}</p>}
