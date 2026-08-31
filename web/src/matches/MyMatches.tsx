@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../auth/AuthContext";
 import { supabase } from "../shared/supabaseClient";
 import { useMyMatches, type MyMatch } from "./useMyMatches";
@@ -51,35 +51,11 @@ export function RatingForm({ match, onDone }: { match: MyMatch; onDone: () => vo
 }
 
 function MatchRow({ match, onChange }: { match: MyMatch; onChange: () => void }) {
-  const { session } = useAuth();
+  const navigate = useNavigate();
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const myScore = match.iAmPlayerA ? match.score_a : match.score_b;
   const oppScore = match.iAmPlayerA ? match.score_b : match.score_a;
-
-  async function reportRound(iWonRound: boolean) {
-    setBusy(true);
-    const winnerId = iWonRound
-      ? session?.user.id
-      : match.iAmPlayerA
-      ? match.player_b
-      : match.player_a;
-    const { data, error } = await supabase.rpc("report_match_result", {
-      p_match_id: match.id,
-      p_winner: winnerId,
-    });
-    setBusy(false);
-    setMessage(
-      error
-        ? error.message
-        : data === "settled"
-        ? "Match complete — settled."
-        : data === "disputed"
-        ? "Your report doesn't match your opponent's — marked as disputed."
-        : "Waiting on your opponent to confirm the result."
-    );
-    onChange();
-  }
 
   async function forfeit() {
     if (!window.confirm("Forfeit this match? Your opponent gets the pot minus the house cut.")) return;
@@ -93,7 +69,7 @@ function MatchRow({ match, onChange }: { match: MyMatch; onChange: () => void })
   return (
     <div style={{ padding: "12px 0", borderBottom: "1px solid var(--border)" }}>
       <div>
-        vs {match.opponentName} — 🪙{(match.stake_cents / 100).toFixed(2)}
+        vs {match.opponentName} — 🪙{(match.stake_cents / 100).toFixed(2)} pot
       </div>
       <div className="stat-secondary">
         {match.status}
@@ -102,21 +78,19 @@ function MatchRow({ match, onChange }: { match: MyMatch; onChange: () => void })
       </div>
 
       {match.status === "in_progress" && (
-        <Link to={`/match/${match.id}`} style={{ color: "var(--accent)", display: "inline-block", marginTop: 6 }}>
-          Play match →
-        </Link>
+        <button
+          type="button"
+          onClick={() => navigate(`/match/${match.id}`)}
+          style={{ marginTop: 8 }}
+        >
+          Play match
+        </button>
       )}
 
       {message && <p role="alert">{message}</p>}
 
       {match.status === "in_progress" && (
         <div style={{ display: "flex", gap: 8, marginTop: 6, flexWrap: "wrap" }}>
-          <button type="button" disabled={busy} onClick={() => reportRound(true)}>
-            I won this round
-          </button>
-          <button type="button" disabled={busy} onClick={() => reportRound(false)}>
-            I lost this round
-          </button>
           <button type="button" disabled={busy} onClick={forfeit} style={{ color: "var(--danger)" }}>
             Forfeit match
           </button>
