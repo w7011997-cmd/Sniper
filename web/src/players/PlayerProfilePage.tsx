@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { usePlayerProfile } from "./usePlayerProfile";
 
@@ -13,10 +14,13 @@ function timeAgo(iso: string | null) {
   return `${days}d ago`;
 }
 
+type Tab = "all" | "matches" | "reviews";
+
 export default function PlayerProfilePage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const p = usePlayerProfile(id);
+  const [tab, setTab] = useState<Tab>("all");
 
   const ratingDisplay = p.ratingCount > 0 ? p.avgRating.toFixed(1) : "—";
   const rankDisplay = p.rank ? `${p.rank}${p.rank === 1 ? "st" : p.rank === 2 ? "nd" : p.rank === 3 ? "rd" : "th"}` : "—";
@@ -75,61 +79,92 @@ export default function PlayerProfilePage() {
         )}
       </div>
 
-      <div className="profile-card">
-        <div className="section-title">🕐 RECENT MATCHES</div>
-        {p.recentMatches.length === 0 && !p.loading && (
-          <p className="stat-secondary">No completed matches yet.</p>
-        )}
-        {p.recentMatches.map((m, i) => (
-          <div className="activity-item" key={i}>
-            <div>{m.won ? "🏆" : "❌"}</div>
-            <div style={{ flex: 1 }}>
-              <div>
-                {m.won ? "Won" : "Lost"} vs{" "}
-                <Link to={`/players/${m.opponentId}`} style={{ color: "inherit" }}>
-                  {m.opponentName}
-                </Link>{" "}
-                ({m.myScore}-{m.opponentScore})
-              </div>
-              <div className="stat-secondary">🪙{(m.stakeCents / 100).toFixed(2)} stake</div>
-            </div>
-            <div className="stat-secondary">{timeAgo(m.endedAt)}</div>
-          </div>
-        ))}
+      <div style={{ display: "flex", gap: 8, marginTop: 16, marginBottom: 8 }}>
+        <button
+          type="button"
+          onClick={() => setTab(tab === "matches" ? "all" : "matches")}
+          style={{
+            flex: 1,
+            background: tab === "matches" ? "var(--accent)" : "transparent",
+            borderColor: tab === "matches" ? "var(--accent)" : "var(--border)",
+            color: tab === "matches" ? "#fff" : "var(--text)",
+          }}
+        >
+          Matches
+        </button>
+        <button
+          type="button"
+          onClick={() => setTab(tab === "reviews" ? "all" : "reviews")}
+          style={{
+            flex: 1,
+            background: tab === "reviews" ? "var(--accent)" : "transparent",
+            borderColor: tab === "reviews" ? "var(--accent)" : "var(--border)",
+            color: tab === "reviews" ? "#fff" : "var(--text)",
+          }}
+        >
+          Reviews
+        </button>
       </div>
 
-      <div className="profile-card">
-        <div className="section-title">⭐ REVIEWS</div>
-        {p.reviews.length === 0 && (
-          <p className="stat-secondary">No reviews yet.</p>
-        )}
-        {p.reviews.map((r, i) => (
-          <div key={i} style={{ padding: "10px 0", borderTop: i > 0 ? "1px solid var(--border)" : undefined }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-              <div style={{ display: "flex" }}>
-                {[1, 2, 3, 4, 5].map((n) => (
-                  <svg key={n} width="16" height="16" viewBox="0 0 24 24" style={{ marginRight: 2 }}>
-                    <path
-                      d="M12 2.5l2.9 6.26 6.6.78-4.9 4.6 1.28 6.6L12 17.6l-5.88 3.14 1.28-6.6-4.9-4.6 6.6-.78z"
-                      fill={n <= r.stars ? "#fbbf24" : "none"}
-                      stroke={n <= r.stars ? "#fbbf24" : "var(--border)"}
-                      strokeWidth="1.5"
-                    />
-                  </svg>
-                ))}
+      {(tab === "all" || tab === "matches") && (
+        <div className="profile-card">
+          <div className="section-title">🕐 RECENT MATCHES</div>
+          {p.recentMatches.length === 0 && !p.loading && (
+            <p className="stat-secondary">No completed matches yet.</p>
+          )}
+          {p.recentMatches.map((m, i) => (
+            <div className="activity-item" key={i}>
+              <div>{m.won ? "🏆" : "❌"}</div>
+              <div style={{ flex: 1 }}>
+                <div>
+                  {m.won ? "Won" : "Lost"} vs{" "}
+                  <Link to={`/players/${m.opponentId}`} style={{ color: "inherit" }}>
+                    {m.opponentName}
+                  </Link>{" "}
+                  ({m.myScore}-{m.opponentScore})
+                </div>
+                <div className="stat-secondary">🪙{(m.stakeCents / 100).toFixed(2)} stake</div>
               </div>
-              <span className="stat-secondary">{timeAgo(r.createdAt)}</span>
+              <div className="stat-secondary">{timeAgo(m.endedAt)}</div>
             </div>
-            {r.comment && <p style={{ margin: "6px 0 4px", fontStyle: "italic" }}>"{r.comment}"</p>}
-            <div className="stat-secondary">
-              —{" "}
-              <Link to={`/players/${r.raterId}`} style={{ color: "inherit" }}>
-                {r.raterName}
-              </Link>
+          ))}
+        </div>
+      )}
+
+      {(tab === "all" || tab === "reviews") && (
+        <div className="profile-card">
+          <div className="section-title">⭐ REVIEWS</div>
+          {p.reviews.length === 0 && (
+            <p className="stat-secondary">No reviews yet.</p>
+          )}
+          {p.reviews.map((r, i) => (
+            <div key={i} style={{ padding: "10px 0", borderTop: i > 0 ? "1px solid var(--border)" : undefined }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <div style={{ display: "flex" }}>
+                  {[1, 2, 3, 4, 5].map((n) => (
+                    <svg key={n} width="16" height="16" viewBox="0 0 24 24" style={{ marginRight: 2 }}>
+                      <path
+                        d="M12 2.5l2.9 6.26 6.6.78-4.9 4.6 1.28 6.6L12 17.6l-5.88 3.14 1.28-6.6-4.9-4.6 6.6-.78z"
+                        fill={n <= r.stars ? "#fbbf24" : "none"}
+                        stroke={n <= r.stars ? "#fbbf24" : "var(--border)"}
+                        strokeWidth="1.5"
+                      />
+                    </svg>
+                  ))}
+                </div>
+                <span className="stat-secondary">{timeAgo(r.createdAt)}</span>
+              </div>
+              {r.comment && <p style={{ margin: "6px 0 4px", fontStyle: "italic" }}>"{r.comment}"</p>}
+              <div className="stat-secondary">
+                —{" "}
+                <Link to={`/players/${r.raterId}`} style={{ color: "inherit" }}>
+                  {r.raterName}
+                </Link>
+              </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
