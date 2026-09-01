@@ -104,6 +104,29 @@ export default function MatchRoom() {
     load();
   }
 
+  // Live score sync: the engine posts p1/p2 (stable, player_a/player_b
+  // ordered) every time a pot or foul changes the score. Persisting this
+  // is purely cosmetic \u2014 finalize_match settles money based on the final
+  // report, not these numbers \u2014 so failures here are swallowed quietly
+  // rather than shown as alarming errors.
+  useEffect(() => {
+    function handleScoreMessage(event: MessageEvent) {
+      if (event.data?.type !== "sniper-score-update") return;
+      if (!id) return;
+      supabase
+        .rpc("update_match_score", {
+          p_match_id: id,
+          p_score_a: event.data.p1,
+          p_score_b: event.data.p2,
+        })
+        .then(({ error }) => {
+          if (!error) load();
+        });
+    }
+    window.addEventListener("message", handleScoreMessage);
+    return () => window.removeEventListener("message", handleScoreMessage);
+  }, [id]);
+
   async function sendRematch() {
     if (!match || !session) return;
     const oppId = isPlayerA ? match.player_b : match.player_a;
