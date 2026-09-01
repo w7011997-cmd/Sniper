@@ -6,6 +6,7 @@ import LiveMatches from "./dashboard/LiveMatches";
 import IncomingChallenges from "./challenges/IncomingChallenges";
 import FindOpponent from "./challenges/FindOpponent";
 import MyMatches from "./matches/MyMatches";
+import MatchHistoryPage from "./matches/MatchHistoryPage";
 import RankingsPage from "./rankings/RankingsPage";
 import MessagesPage from "./messages/MessagesPage";
 import ProfilePage from "./profile/ProfilePage";
@@ -20,7 +21,6 @@ function MatchesPage() {
     <div>
       <h1>Matches</h1>
       <IncomingChallenges />
-      <MyMatches />
       <FindOpponent />
     </div>
   );
@@ -46,6 +46,7 @@ function Gate() {
           <Route path="/players/:id" element={<PlayerProfilePage />} />
           <Route path="/wallet" element={<WalletPage />} />
           <Route path="/match/:id" element={<MatchRoom />} />
+          <Route path="/matches/history" element={<MatchHistoryPage />} />
         </Routes>
       </div>
       <BottomNav />

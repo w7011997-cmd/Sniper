@@ -75,7 +75,7 @@ export default function ProfilePage() {
         )}
       </div>
 
-      <Link to="/matches" className="quick-link" style={{ textDecoration: "none", color: "inherit" }}>
+      <Link to="/matches/history" className="quick-link" style={{ textDecoration: "none", color: "inherit" }}>
         <div className="quick-link-icon">🕐</div>
         <div style={{ flex: 1 }}>
           <div className="quick-link-title">Match History</div>
