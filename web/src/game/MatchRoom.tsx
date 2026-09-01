@@ -28,6 +28,7 @@ export default function MatchRoom() {
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [alreadyRated, setAlreadyRated] = useState(false);
+  const [localGameOver, setLocalGameOver] = useState(false);
 
   async function load() {
     if (!id || !session) return;
@@ -61,6 +62,7 @@ export default function MatchRoom() {
   }
 
   useEffect(() => {
+    setLocalGameOver(false);
     load();
     if (!id) return;
     const channel = supabase
@@ -127,22 +129,6 @@ export default function MatchRoom() {
     return () => window.removeEventListener("message", handleScoreMessage);
   }, [id]);
 
-  async function sendRematch() {
-    if (!match || !session) return;
-    const oppId = isPlayerA ? match.player_b : match.player_a;
-    const raw = window.prompt("Stake amount (🪙) for the rematch?");
-    const naira = Number(raw);
-    if (!raw || isNaN(naira) || naira <= 0) return;
-    setBusy(true);
-    const { error } = await supabase.from("challenges").insert({
-      challenger_id: session.user.id,
-      opponent_id: oppId,
-      stake_cents: Math.round(naira * 100),
-    });
-    setBusy(false);
-    setMessage(error ? error.message : "Rematch challenge sent.");
-  }
-
   async function forfeit() {
     if (!match) return;
     if (!window.confirm("Forfeit this match? Your opponent gets the pot minus the house cut.")) return;
@@ -177,6 +163,7 @@ export default function MatchRoom() {
   useEffect(() => {
     function handleMessage(event: MessageEvent) {
       if (event.data?.type !== "sniper-match-complete") return;
+      setLocalGameOver(true);
       const m = matchRef.current;
       if (!m || !session) return;
       const isPlayerNow = session.user.id === m.player_a || session.user.id === m.player_b;
@@ -239,9 +226,9 @@ export default function MatchRoom() {
           : `${names[match.player_a] ?? "Player"} vs ${names[match.player_b] ?? "Player"}`}
       </h1>
 
-      {match.status === "in_progress" && (
+      {match.status === "in_progress" && !localGameOver && (
         <p className="stat-secondary">
-          Round {match.current_round}/{match.rounds} — score {myScore}-{oppScore}
+          Score: {myScore}-{oppScore}
         </p>
       )}
 
@@ -255,7 +242,7 @@ export default function MatchRoom() {
 
       {message && <p role="alert" style={{ marginTop: 8 }}>{message}</p>}
 
-      {isPlayer && match.status === "in_progress" && (
+      {isPlayer && match.status === "in_progress" && !localGameOver && (
         <div style={{ display: "flex", gap: 8, marginTop: 12, flexWrap: "wrap" }}>
           <button type="button" disabled={busy} onClick={forfeit} style={{ color: "var(--danger)" }}>
             Forfeit match
@@ -272,12 +259,6 @@ export default function MatchRoom() {
       {isPlayer && match.status === "completed" && alreadyRated && (
         <p className="stat-secondary">You rated this match.</p>
       )}
-      {isPlayer && match.status === "completed" && isPlayerA && (
-        <button type="button" disabled={busy} onClick={sendRematch} style={{ marginTop: 8 }}>
-          Send rematch
-        </button>
-      )}
-
       {isPlayerA && match.status === "completed" && (
         <button type="button" disabled={busy} onClick={requestRematch} style={{ marginTop: 12 }}>
           Request rematch

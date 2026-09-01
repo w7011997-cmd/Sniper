@@ -9,6 +9,13 @@ export interface ActivityItem {
   time: string;
 }
 
+export interface Review {
+  raterName: string;
+  stars: number;
+  comment: string | null;
+  time: string;
+}
+
 export interface ProfileData {
   username: string;
   email: string;
@@ -19,7 +26,9 @@ export interface ProfileData {
   avgRating: number;
   ratingCount: number;
   winStreak: number;
+  rank: number | null;
   activity: ActivityItem[];
+  reviews: Review[];
   loading: boolean;
 }
 
@@ -46,7 +55,9 @@ export function useProfileData(): ProfileData {
     avgRating: 0,
     ratingCount: 0,
     winStreak: 0,
+    rank: null,
     activity: [],
+    reviews: [],
     loading: true,
   });
 
@@ -56,7 +67,7 @@ export function useProfileData(): ProfileData {
     const userEmail = session.user.email ?? "";
 
     async function load() {
-      const [{ data: profile }, { data: wallet }, { data: stats }, { data: matches }] = await Promise.all([
+      const [{ data: profile }, { data: wallet }, { data: stats }, { data: matches }, { count: rankAbove }, { data: ratings }] = await Promise.all([
         supabase.from("profiles").select("username, created_at").eq("id", uid).single(),
         supabase.from("wallets").select("balance_cents").eq("user_id", uid).single(),
         supabase.from("player_stats").select("avg_rating, rating_count, wins, losses").eq("player_id", uid).single(),
@@ -66,6 +77,20 @@ export function useProfileData(): ProfileData {
           .eq("status", "completed")
           .or(`player_a.eq.${uid},player_b.eq.${uid}`)
           .order("ended_at", { ascending: false })
+          .limit(5),
+        (async () => {
+          const { data: mine } = await supabase.from("player_stats").select("wins").eq("player_id", uid).single();
+          if (!mine) return { count: null };
+          return supabase
+            .from("player_stats")
+            .select("player_id", { count: "exact", head: true })
+            .gt("wins", mine.wins);
+        })(),
+        supabase
+          .from("ratings")
+          .select("stars, comment, created_at, rater:rater_id(username)")
+          .eq("rated_player", uid)
+          .order("created_at", { ascending: false })
           .limit(5),
       ]);
 
@@ -96,6 +121,13 @@ export function useProfileData(): ProfileData {
           ]
         : [];
 
+      const reviewItems: Review[] = (ratings ?? []).map((r: any) => ({
+        raterName: r.rater?.username ?? "Player",
+        stars: r.stars,
+        comment: r.comment,
+        time: r.created_at ? timeAgo(r.created_at) : "",
+      }));
+
       setState({
         username: profile?.username ?? "",
         email: userEmail,
@@ -106,7 +138,9 @@ export function useProfileData(): ProfileData {
         avgRating: stats?.avg_rating ?? 0,
         ratingCount: stats?.rating_count ?? 0,
         winStreak,
+        rank: rankAbove !== null ? rankAbove + 1 : null,
         activity: [...matchActivity, ...accountActivity],
+        reviews: reviewItems,
         loading: false,
       });
     }

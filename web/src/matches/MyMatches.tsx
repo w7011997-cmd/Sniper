@@ -3,6 +3,25 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "../shared/supabaseClient";
 import { useMyMatches, type MyMatch } from "./useMyMatches";
 
+function Star({ filled, onClick }: { filled: boolean; onClick: () => void }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      style={{ background: "none", border: "none", padding: 2, lineHeight: 0 }}
+    >
+      <svg width="28" height="28" viewBox="0 0 24 24">
+        <path
+          d="M12 2.5l2.9 6.26 6.6.78-4.9 4.6 1.28 6.6L12 17.6l-5.88 3.14 1.28-6.6-4.9-4.6 6.6-.78z"
+          fill={filled ? "#fbbf24" : "none"}
+          stroke={filled ? "#fbbf24" : "var(--border)"}
+          strokeWidth="1.5"
+        />
+      </svg>
+    </button>
+  );
+}
+
 export function RatingForm({ match, onDone }: { match: MyMatch; onDone: () => void }) {
   const [stars, setStars] = useState(5);
   const [comment, setComment] = useState("");
@@ -24,16 +43,9 @@ export function RatingForm({ match, onDone }: { match: MyMatch; onDone: () => vo
   return (
     <div style={{ marginTop: 8 }}>
       {message && <p role="alert">{message}</p>}
-      <div>
+      <div style={{ display: "flex" }}>
         {[1, 2, 3, 4, 5].map((n) => (
-          <button
-            key={n}
-            type="button"
-            onClick={() => setStars(n)}
-            style={{ background: "none", border: "none", fontSize: 20, padding: 2 }}
-          >
-            {n <= stars ? "★" : "☆"}
-          </button>
+          <Star key={n} filled={n <= stars} onClick={() => setStars(n)} />
         ))}
       </div>
       <input
