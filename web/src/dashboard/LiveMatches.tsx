@@ -19,17 +19,17 @@ function MatchCard({ match }: { match: LiveMatch }) {
     <div className="match-card">
       <div className="live-badge">● LIVE</div>
       <div className="match-players">
-        <div className="match-player">
+        <Link to={`/players/${match.player_a}`} className="match-player" style={{ textDecoration: "none", color: "inherit" }}>
           <Avatar name={match.playerAName} />
           <div>{match.playerAName}</div>
           <Stars avg={match.playerAStats.avg_rating} count={match.playerAStats.rating_count} />
-        </div>
+        </Link>
         <div className="match-vs">VS</div>
-        <div className="match-player">
+        <Link to={`/players/${match.player_b}`} className="match-player" style={{ textDecoration: "none", color: "inherit" }}>
           <Avatar name={match.playerBName} />
           <div>{match.playerBName}</div>
           <Stars avg={match.playerBStats.avg_rating} count={match.playerBStats.rating_count} />
-        </div>
+        </Link>
       </div>
       <p className="stat-secondary" style={{ textAlign: "center" }}>
         Stake: 🪙{(match.stake_cents / 100).toFixed(2)} each

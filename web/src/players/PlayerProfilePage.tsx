@@ -1,14 +1,25 @@
-import { useParams, useNavigate } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import { usePlayerProfile } from "./usePlayerProfile";
+
+function timeAgo(iso: string | null) {
+  if (!iso) return "";
+  const diffMs = Date.now() - new Date(iso).getTime();
+  const mins = Math.floor(diffMs / 60000);
+  if (mins < 1) return "Just now";
+  if (mins < 60) return `${mins}m ago`;
+  const hours = Math.floor(mins / 60);
+  if (hours < 24) return `${hours}h ago`;
+  const days = Math.floor(hours / 24);
+  return `${days}d ago`;
+}
 
 export default function PlayerProfilePage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const p = usePlayerProfile(id);
 
-  const played = p.wins + p.losses;
-  const winRate = played > 0 ? Math.round((p.wins / played) * 100) : 0;
   const ratingDisplay = p.ratingCount > 0 ? p.avgRating.toFixed(1) : "—";
+  const rankDisplay = p.rank ? `${p.rank}${p.rank === 1 ? "st" : p.rank === 2 ? "nd" : p.rank === 3 ? "rd" : "th"}` : "—";
 
   if (p.notFound) {
     return (
@@ -44,11 +55,13 @@ export default function PlayerProfilePage() {
             <div className="stat-card-label">LOSSES</div>
             <div className="stat-card-value" style={{ color: "#ef4444" }}>{p.losses}</div>
           </div>
-          <div className="stat-card">
-            <div>🎯</div>
-            <div className="stat-card-label">WIN RATE</div>
-            <div className="stat-card-value" style={{ color: "var(--accent)" }}>{winRate}%</div>
-          </div>
+          <Link to="/rankings" style={{ textDecoration: "none", color: "inherit" }}>
+            <div className="stat-card">
+              <div>👑</div>
+              <div className="stat-card-label">RANK</div>
+              <div className="stat-card-value" style={{ color: "var(--accent)" }}>{rankDisplay}</div>
+            </div>
+          </Link>
           <div className="stat-card">
             <div>⭐</div>
             <div className="stat-card-label">RATING</div>
@@ -71,8 +84,48 @@ export default function PlayerProfilePage() {
           <div className="activity-item" key={i}>
             <div>{m.won ? "🏆" : "❌"}</div>
             <div style={{ flex: 1 }}>
-              <div>{m.won ? "Won" : "Lost"} vs {m.opponentName}</div>
+              <div>
+                {m.won ? "Won" : "Lost"} vs{" "}
+                <Link to={`/players/${m.opponentId}`} style={{ color: "inherit" }}>
+                  {m.opponentName}
+                </Link>{" "}
+                ({m.myScore}-{m.opponentScore})
+              </div>
               <div className="stat-secondary">🪙{(m.stakeCents / 100).toFixed(2)} stake</div>
+            </div>
+            <div className="stat-secondary">{timeAgo(m.endedAt)}</div>
+          </div>
+        ))}
+      </div>
+
+      <div className="profile-card">
+        <div className="section-title">⭐ REVIEWS</div>
+        {p.reviews.length === 0 && (
+          <p className="stat-secondary">No reviews yet.</p>
+        )}
+        {p.reviews.map((r, i) => (
+          <div key={i} style={{ padding: "10px 0", borderTop: i > 0 ? "1px solid var(--border)" : undefined }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <div style={{ display: "flex" }}>
+                {[1, 2, 3, 4, 5].map((n) => (
+                  <svg key={n} width="16" height="16" viewBox="0 0 24 24" style={{ marginRight: 2 }}>
+                    <path
+                      d="M12 2.5l2.9 6.26 6.6.78-4.9 4.6 1.28 6.6L12 17.6l-5.88 3.14 1.28-6.6-4.9-4.6 6.6-.78z"
+                      fill={n <= r.stars ? "#fbbf24" : "none"}
+                      stroke={n <= r.stars ? "#fbbf24" : "var(--border)"}
+                      strokeWidth="1.5"
+                    />
+                  </svg>
+                ))}
+              </div>
+              <span className="stat-secondary">{timeAgo(r.createdAt)}</span>
+            </div>
+            {r.comment && <p style={{ margin: "6px 0 4px", fontStyle: "italic" }}>"{r.comment}"</p>}
+            <div className="stat-secondary">
+              —{" "}
+              <Link to={`/players/${r.raterId}`} style={{ color: "inherit" }}>
+                {r.raterName}
+              </Link>
             </div>
           </div>
         ))}

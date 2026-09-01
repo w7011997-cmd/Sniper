@@ -221,9 +221,21 @@ export default function MatchRoom() {
       </div>
 
       <h1 style={{ fontSize: 20 }}>
-        {isPlayer
-          ? `vs ${oppName}`
-          : `${names[match.player_a] ?? "Player"} vs ${names[match.player_b] ?? "Player"}`}
+        {isPlayer ? (
+          <>
+            vs <Link to={`/players/${oppId}`} style={{ color: "inherit" }}>{oppName}</Link>
+          </>
+        ) : (
+          <>
+            <Link to={`/players/${match.player_a}`} style={{ color: "inherit" }}>
+              {names[match.player_a] ?? "Player"}
+            </Link>{" "}
+            vs{" "}
+            <Link to={`/players/${match.player_b}`} style={{ color: "inherit" }}>
+              {names[match.player_b] ?? "Player"}
+            </Link>
+          </>
+        )}
       </h1>
 
       {match.status === "in_progress" && !localGameOver && (

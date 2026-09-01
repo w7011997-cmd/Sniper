@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "../shared/supabaseClient";
 import { useMyMatches, type MyMatch } from "./useMyMatches";
 
@@ -67,6 +67,7 @@ function MatchRow({ match, onChange }: { match: MyMatch; onChange: () => void })
   const [message, setMessage] = useState<string | null>(null);
   const myScore = match.iAmPlayerA ? match.score_a : match.score_b;
   const oppScore = match.iAmPlayerA ? match.score_b : match.score_a;
+  const opponentId = match.iAmPlayerA ? match.player_b : match.player_a;
 
   async function forfeit() {
     if (!window.confirm("Forfeit this match? Your opponent gets the pot minus the house cut.")) return;
@@ -80,12 +81,15 @@ function MatchRow({ match, onChange }: { match: MyMatch; onChange: () => void })
   return (
     <div style={{ padding: "12px 0", borderBottom: "1px solid var(--border)" }}>
       <div>
-        vs {match.opponentName} — 🪙{(match.stake_cents / 100).toFixed(2)} pot
+        vs{" "}
+        <Link to={`/players/${opponentId}`} style={{ color: "inherit" }}>
+          {match.opponentName}
+        </Link>{" "}
+        — 🪙{(match.stake_cents / 100).toFixed(2)}
       </div>
       <div className="stat-secondary">
         {match.status}
-        {match.status === "in_progress" &&
-          ` — round ${match.current_round}/${match.rounds}, score ${myScore}-${oppScore}`}
+        {match.status === "in_progress" && ` — score ${myScore}-${oppScore}`}
       </div>
 
       {match.status === "in_progress" && (

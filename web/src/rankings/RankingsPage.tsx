@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { useAuth } from "../auth/AuthContext";
 import { supabase } from "../shared/supabaseClient";
 import { COUNTRIES, countryFlag } from "../shared/countries";
@@ -75,7 +76,13 @@ export default function RankingsPage() {
               >
                 <td style={{ padding: "10px 4px", verticalAlign: "middle" }}>{i + 1}</td>
                 <td style={{ padding: "10px 4px", verticalAlign: "middle" }}>
-                  <div style={{ fontWeight: 600 }}>{isMe ? "You" : r.username}</div>
+                  {isMe ? (
+                    <div style={{ fontWeight: 600 }}>You</div>
+                  ) : (
+                    <Link to={`/players/${r.player_id}`} style={{ fontWeight: 600, color: "inherit", textDecoration: "none" }}>
+                      {r.username}
+                    </Link>
+                  )}
                   <div style={{ fontSize: 12, color: "var(--muted, #888)", whiteSpace: "nowrap" }}>
                     {countryFlag(r.country ?? "")} {countryName(r.country)}
                   </div>
