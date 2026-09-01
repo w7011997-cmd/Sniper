@@ -5,7 +5,6 @@ import BottomNav from "./nav/BottomNav";
 import LiveMatches from "./dashboard/LiveMatches";
 import IncomingChallenges from "./challenges/IncomingChallenges";
 import FindOpponent from "./challenges/FindOpponent";
-import MyMatches from "./matches/MyMatches";
 import MatchHistoryPage from "./matches/MatchHistoryPage";
 import RankingsPage from "./rankings/RankingsPage";
 import MessagesPage from "./messages/MessagesPage";
