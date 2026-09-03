@@ -88,7 +88,6 @@
 .thread-page {
   display: flex;
   flex-direction: column;
-  height: 100%;
 }
 
 .thread-header {
@@ -99,12 +98,10 @@
 }
 
 .thread-messages {
-  flex: 1;
-  overflow-y: auto;
   display: flex;
   flex-direction: column;
   gap: 8px;
-  padding: 12px 0;
+  padding: 12px 0 90px;
 }
 
 .thread-bubble {
@@ -133,9 +130,17 @@
 }
 
 .thread-input-row {
+  position: fixed;
+  bottom: 72px;
+  left: 0;
+  right: 0;
+  max-width: 600px;
+  margin: 0 auto;
   display: flex;
   gap: 8px;
-  padding: 8px 0;
+  padding: 10px 16px;
+  background: var(--bg);
+  border-top: 1px solid var(--border);
 }
 
 .thread-input-row input {
