@@ -25,8 +25,11 @@ export function useConversations() {
     if (!session) return;
     load();
 
+    // Unique per hook instance, not just per user \u2014 BottomNav's badge and
+    // MessagesPage's list both use this hook at the same time, and reusing
+    // one channel name across them made the second subscribe() throw.
     const channel = supabase
-      .channel(`conversations-${session.user.id}`)
+      .channel(`conversations-${session.user.id}-${crypto.randomUUID()}`)
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "direct_messages" },
