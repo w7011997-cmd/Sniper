@@ -88,7 +88,7 @@
 .thread-page {
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 140px);
+  height: 100%;
 }
 
 .thread-header {
@@ -118,8 +118,9 @@
 
 .thread-bubble-mine {
   align-self: flex-end;
-  background: var(--accent);
-  color: #fff;
+  background: #26282c;
+  border: 1px solid var(--border);
+  color: var(--text);
   border-bottom-right-radius: 4px;
 }
 
@@ -127,6 +128,7 @@
   align-self: flex-start;
   background: var(--surface);
   border: 1px solid var(--border);
+  color: var(--text);
   border-bottom-left-radius: 4px;
 }
 
@@ -138,4 +140,22 @@
 
 .thread-input-row input {
   flex: 1;
+}
+
+.thread-send-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #26282c;
+  border: 1px solid var(--border);
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.thread-send-btn:disabled {
+  opacity: 0.4;
 }

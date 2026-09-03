@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useParams, Link } from "react-router-dom";
+import { Send } from "lucide-react";
 import { useAuth } from "../auth/AuthContext";
 import { supabase } from "../shared/supabaseClient";
 import "./messages.css";
@@ -117,8 +118,14 @@ export default function ConversationThread() {
           onChange={(e) => setDraft(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && send()}
         />
-        <button type="button" disabled={sending || !draft.trim()} onClick={send}>
-          Send
+        <button
+          type="button"
+          className="thread-send-btn"
+          disabled={sending || !draft.trim()}
+          onClick={send}
+          aria-label="Send"
+        >
+          <Send size={18} />
         </button>
       </div>
     </div>
