@@ -8,6 +8,7 @@ import FindOpponent from "./challenges/FindOpponent";
 import MatchHistoryPage from "./matches/MatchHistoryPage";
 import RankingsPage from "./rankings/RankingsPage";
 import MessagesPage from "./messages/MessagesPage";
+import ConversationThread from "./messages/ConversationThread";
 import ProfilePage from "./profile/ProfilePage";
 import PlayerProfilePage from "./players/PlayerProfilePage";
 import WalletPage from "./wallet/WalletPage";
@@ -41,6 +42,7 @@ function Gate() {
           <Route path="/matches" element={<MatchesPage />} />
           <Route path="/rankings" element={<RankingsPage />} />
           <Route path="/messages" element={<MessagesPage />} />
+          <Route path="/messages/:userId" element={<ConversationThread />} />
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/players/:id" element={<PlayerProfilePage />} />
           <Route path="/wallet" element={<WalletPage />} />
