@@ -1,7 +1,10 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { Settings } from "lucide-react";
 import { supabase } from "../shared/supabaseClient";
 import { useConversations } from "./useConversations";
+import WalletWarningBanner from "../shared/WalletWarningBanner";
+import MessageSettingsPanel from "./MessageSettingsPanel";
 import "./messages.css";
 
 function timeAgo(iso: string): string {
@@ -19,6 +22,7 @@ function timeAgo(iso: string): string {
 export default function MessagesPage() {
   const { conversations, loading } = useConversations();
   const [searching, setSearching] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<{ id: string; username: string }[]>([]);
 
@@ -40,10 +44,24 @@ export default function MessagesPage() {
     <div className="messages-page">
       <div className="messages-header">
         <h1>Messages</h1>
-        <button type="button" onClick={() => setSearching((s) => !s)}>
-          {searching ? "Cancel" : "New message"}
-        </button>
+        <div style={{ display: "flex", gap: 8 }}>
+          <button type="button" onClick={() => setSearching((s) => !s)}>
+            {searching ? "Cancel" : "New message"}
+          </button>
+          <button
+            type="button"
+            className="messages-settings-btn"
+            onClick={() => setShowSettings((s) => !s)}
+            aria-label="Message settings"
+          >
+            <Settings size={18} />
+          </button>
+        </div>
       </div>
+
+      <WalletWarningBanner />
+
+      {showSettings && <MessageSettingsPanel />}
 
       {searching && (
         <div className="messages-search">

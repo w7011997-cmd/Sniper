@@ -16,6 +16,7 @@ export function useConversations() {
   const [loading, setLoading] = useState(true);
 
   async function load() {
+    await supabase.rpc("delete_expired_messages");
     const { data } = await supabase.rpc("get_my_conversations");
     setConversations(data ?? []);
     setLoading(false);

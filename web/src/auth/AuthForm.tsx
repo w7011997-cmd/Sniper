@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from "react";
 import { supabase } from "../shared/supabaseClient";
 import { COUNTRIES } from "../shared/countries";
+import PrivacyPolicyContent from "../legal/PrivacyPolicyContent";
 
 export default function AuthForm() {
   const [mode, setMode] = useState<"signin" | "signup">("signin");
@@ -8,6 +9,8 @@ export default function AuthForm() {
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
   const [country, setCountry] = useState("");
+  const [agreedToPrivacy, setAgreedToPrivacy] = useState(false);
+  const [showPrivacyPolicy, setShowPrivacyPolicy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
@@ -25,6 +28,11 @@ export default function AuthForm() {
       }
       if (!country) {
         setError("Please select your country.");
+        setBusy(false);
+        return;
+      }
+      if (!agreedToPrivacy) {
+        setError("You must agree to the Privacy Policy to create an account.");
         setBusy(false);
         return;
       }
@@ -118,8 +126,48 @@ export default function AuthForm() {
             minLength={6}
           />
         </div>
+
+        {mode === "signup" && (
+          <div>
+            <label style={{ display: "flex", alignItems: "flex-start", gap: 8, cursor: "pointer" }}>
+              <input
+                type="checkbox"
+                checked={agreedToPrivacy}
+                onChange={(e) => setAgreedToPrivacy(e.target.checked)}
+                style={{ marginTop: 3 }}
+              />
+              <span>
+                I have read and agree to the{" "}
+                <span
+                  style={{ color: "var(--accent)", textDecoration: "underline" }}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setShowPrivacyPolicy((s) => !s);
+                  }}
+                >
+                  Privacy Policy
+                </span>
+              </span>
+            </label>
+            {showPrivacyPolicy && (
+              <div
+                style={{
+                  maxHeight: 240,
+                  overflowY: "auto",
+                  border: "1px solid var(--border)",
+                  borderRadius: 8,
+                  padding: 12,
+                  marginTop: 8,
+                }}
+              >
+                <PrivacyPolicyContent />
+              </div>
+            )}
+          </div>
+        )}
+
         {error && <p role="alert">{error}</p>}
-        <button type="submit" disabled={busy}>
+        <button type="submit" disabled={busy || (mode === "signup" && !agreedToPrivacy)}>
           {busy ? "Please wait..." : mode === "signup" ? "Sign up" : "Sign in"}
         </button>
       </form>

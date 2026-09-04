@@ -466,3 +466,25 @@ body,
 .player-link:hover {
   text-decoration: underline;
 }
+
+.wallet-warning-banner {
+  background: rgba(244, 33, 46, 0.08);
+  border: 1px solid rgba(244, 33, 46, 0.35);
+  color: #ff8a94;
+  font-size: 13px;
+  line-height: 1.5;
+  padding: 10px 14px;
+  border-radius: 10px;
+  margin: 12px 0;
+}
+
+.wallet-warning-banner {
+  background: rgba(244, 33, 46, 0.08);
+  border: 1px solid rgba(244, 33, 46, 0.35);
+  color: #ff8a94;
+  font-size: 13px;
+  line-height: 1.5;
+  padding: 10px 14px;
+  border-radius: 10px;
+  margin: 12px 0;
+}

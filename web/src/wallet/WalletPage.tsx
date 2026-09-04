@@ -5,6 +5,7 @@ import { Browser } from "@capacitor/browser";
 import { Capacitor } from "@capacitor/core";
 import { supabase } from "../shared/supabaseClient";
 import { useWallet } from "./useWallet";
+import WalletWarningBanner from "../shared/WalletWarningBanner";
 import "../profile/profile.css";
 import "./wallet.css";
 
@@ -99,6 +100,8 @@ export default function WalletPage() {
           </span>
         </div>
       </div>
+
+      <WalletWarningBanner />
 
       <div className="p2-card">
         <div className="p2-section-title">
