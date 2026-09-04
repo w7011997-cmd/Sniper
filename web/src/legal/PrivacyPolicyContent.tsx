@@ -1,8 +1,7 @@
 export default function PrivacyPolicyContent() {
   return (
     <div className="privacy-policy-content">
-      <h3>Privacy Policy</h3>
-      <p className="stat-secondary">This is a draft policy and has not been reviewed by a lawyer.</p>
+      <h2>Privacy Policy</h2>
 
       <h4>Wallet & Funds</h4>
       <p>
