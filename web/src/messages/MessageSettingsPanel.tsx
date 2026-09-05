@@ -25,10 +25,24 @@ export default function MessageSettingsPanel() {
 
   async function toggle(key: keyof Settings) {
     if (!settings || !session) return;
-    const next = { ...settings, [key]: !settings[key] };
+    const turningOn = !settings[key];
+
+    const next: Settings = { ...settings, [key]: turningOn };
+    if (turningOn && (key === "blocks_all_messages" || key === "only_played_with_can_message")) {
+      const other = key === "blocks_all_messages" ? "only_played_with_can_message" : "blocks_all_messages";
+      next[other] = false;
+    }
+
     setSettings(next);
     setSaving(true);
-    await supabase.from("profiles").update({ [key]: next[key] }).eq("id", session.user.id);
+    await supabase
+      .from("profiles")
+      .update({
+        blocks_all_messages: next.blocks_all_messages,
+        only_played_with_can_message: next.only_played_with_can_message,
+        auto_clear_messages_24h: next.auto_clear_messages_24h,
+      })
+      .eq("id", session.user.id);
     setSaving(false);
   }
 
