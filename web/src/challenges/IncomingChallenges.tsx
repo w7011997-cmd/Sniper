@@ -5,7 +5,6 @@ import { supabase } from "../shared/supabaseClient";
 
 interface IncomingChallenge {
   id: string;
-  stake_cents: number;
   challenger: { username: string } | null;
 }
 
@@ -23,7 +22,7 @@ export default function IncomingChallenges() {
   async function load() {
     const { data } = await supabase
       .from("challenges")
-      .select("id, stake_cents, challenger:challenger_id(username)")
+      .select("id, challenger:challenger_id(username)")
       .eq("opponent_id", session?.user.id ?? "")
       .eq("status", "pending");
     setChallenges((data as any) ?? []);
@@ -72,7 +71,7 @@ export default function IncomingChallenges() {
           }}
         >
           <span style={{ flex: 1 }}>
-            {c.challenger?.username ?? "Someone"} — 🪙{(c.stake_cents / 100).toFixed(2)}
+            {c.challenger?.username ?? "Someone"}
           </span>
           <button type="button" disabled={busyId === c.id} onClick={() => respond(c.id, true)}>
             Accept
