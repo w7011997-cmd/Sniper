@@ -3,7 +3,6 @@ import { supabase } from "../shared/supabaseClient";
 
 export interface LiveMatch {
   id: string;
-  stake_cents: number;
   player_a: string;
   player_b: string;
   playerAName: string;
@@ -21,7 +20,7 @@ export function useLiveMatches() {
 
     const { data: rawMatches } = await supabase
       .from("matches")
-      .select("id, stake_cents, player_a, player_b")
+      .select("id, player_a, player_b")
       .eq("status", "in_progress")
       .order("started_at", { ascending: false });
 
@@ -47,7 +46,6 @@ export function useLiveMatches() {
       const b = byId.get(m.player_b);
       return {
         id: m.id,
-        stake_cents: m.stake_cents,
         player_a: m.player_a,
         player_b: m.player_b,
         playerAName: a?.username ?? "Player",

@@ -31,9 +31,6 @@ function MatchCard({ match }: { match: LiveMatch }) {
           <Stars avg={match.playerBStats.avg_rating} count={match.playerBStats.rating_count} />
         </Link>
       </div>
-      <p className="stat-secondary" style={{ textAlign: "center" }}>
-        Stake: 🪙{(match.stake_cents / 100).toFixed(2)} each
-      </p>
       <Link
         to={`/match/${match.id}`}
         style={{
