@@ -70,7 +70,7 @@ function MatchRow({ match, onChange }: { match: MyMatch; onChange: () => void })
   const opponentId = match.iAmPlayerA ? match.player_b : match.player_a;
 
   async function forfeit() {
-    if (!window.confirm("Forfeit this match? Your opponent gets the pot minus the house cut.")) return;
+    if (!window.confirm("Forfeit this match? Your opponent will be recorded as the winner.")) return;
     setBusy(true);
     const { error } = await supabase.rpc("forfeit_match", { p_match_id: match.id });
     setBusy(false);
@@ -84,8 +84,7 @@ function MatchRow({ match, onChange }: { match: MyMatch; onChange: () => void })
         vs{" "}
         <Link to={`/players/${opponentId}`} style={{ color: "inherit" }}>
           {match.opponentName}
-        </Link>{" "}
-        — 🪙{(match.stake_cents / 100).toFixed(2)}
+        </Link>
       </div>
       <div className="stat-secondary">
         {match.status}

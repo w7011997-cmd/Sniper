@@ -123,7 +123,6 @@ export default function PlayerProfilePage() {
                   </Link>{" "}
                   ({m.myScore}-{m.opponentScore})
                 </div>
-                <div className="stat-secondary">🪙{(m.stakeCents / 100).toFixed(2)} stake</div>
               </div>
               <div className="stat-secondary">{timeAgo(m.endedAt)}</div>
             </div>

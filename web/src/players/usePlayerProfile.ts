@@ -7,7 +7,6 @@ export interface PublicMatch {
   opponentName: string;
   myScore: number;
   opponentScore: number;
-  stakeCents: number;
   endedAt: string | null;
 }
 
@@ -58,7 +57,7 @@ export function usePlayerProfile(playerId: string | undefined) {
           supabase.from("player_stats").select("avg_rating, rating_count, wins, losses").eq("player_id", playerId).single(),
           supabase
             .from("matches")
-            .select("id, stake_cents, winner_id, player_a, player_b, score_a, score_b, ended_at")
+            .select("id, winner_id, player_a, player_b, score_a, score_b, ended_at")
             .eq("status", "completed")
             .or(`player_a.eq.${playerId},player_b.eq.${playerId}`)
             .order("ended_at", { ascending: false })
@@ -99,7 +98,6 @@ export function usePlayerProfile(playerId: string | undefined) {
           opponentName: nameById.get(oppId) ?? "opponent",
           myScore: isPlayerA ? m.score_a : m.score_b,
           opponentScore: isPlayerA ? m.score_b : m.score_a,
-          stakeCents: m.stake_cents,
           endedAt: m.ended_at,
         };
       });
