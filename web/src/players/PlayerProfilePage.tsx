@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
+import { ChevronLeft, Trophy, XCircle, Crown, Star, TrendingUp } from "lucide-react";
 import { usePlayerProfile } from "./usePlayerProfile";
 
 function timeAgo(iso: string | null) {
@@ -29,8 +30,10 @@ export default function PlayerProfilePage() {
     return (
       <div className="profile-page">
         <div className="profile-topbar">
-          <button className="icon-circle-btn" onClick={() => navigate(-1)}>‹</button>
-          <h2 style={{ margin: 0 }}>PLAYER</h2>
+          <button className="icon-circle-btn" onClick={() => navigate(-1)}>
+            <ChevronLeft size={18} />
+          </button>
+          <h2 style={{ margin: 0 }}>Player</h2>
           <div style={{ width: 36 }} />
         </div>
         <p className="stat-secondary">Player not found.</p>
@@ -41,34 +44,36 @@ export default function PlayerProfilePage() {
   return (
     <div className="profile-page">
       <div className="profile-topbar">
-        <button className="icon-circle-btn" onClick={() => navigate(-1)}>‹</button>
-        <h2 style={{ margin: 0 }}>{p.loading ? "..." : p.username.toUpperCase()}</h2>
+        <button className="icon-circle-btn" onClick={() => navigate(-1)}>
+          <ChevronLeft size={18} />
+        </button>
+        <h2 style={{ margin: 0 }}>{p.loading ? "..." : p.username}</h2>
         <div style={{ width: 36 }} />
       </div>
 
       <div className="profile-card">
-        <div className="section-title">📈 PERFORMANCE OVERVIEW</div>
+        <div className="section-title"><TrendingUp size={14} /> Performance overview</div>
         <div className="stats-grid">
-          <div className="stat-card">
-            <div>🏆</div>
-            <div className="stat-card-label">WINS</div>
+          <div className="stat-card" style={{ color: "#22c55e" }}>
+            <Trophy size={18} />
+            <div className="stat-card-label">Wins</div>
             <div className="stat-card-value" style={{ color: "#22c55e" }}>{p.wins}</div>
           </div>
-          <div className="stat-card">
-            <div>❌</div>
-            <div className="stat-card-label">LOSSES</div>
+          <div className="stat-card" style={{ color: "#ef4444" }}>
+            <XCircle size={18} />
+            <div className="stat-card-label">Losses</div>
             <div className="stat-card-value" style={{ color: "#ef4444" }}>{p.losses}</div>
           </div>
-          <Link to="/rankings" style={{ textDecoration: "none", color: "inherit" }}>
-            <div className="stat-card">
-              <div>👑</div>
-              <div className="stat-card-label">RANK</div>
+          <Link to="/rankings" style={{ textDecoration: "none" }}>
+            <div className="stat-card" style={{ color: "var(--accent)" }}>
+              <Crown size={18} />
+              <div className="stat-card-label">Rank</div>
               <div className="stat-card-value" style={{ color: "var(--accent)" }}>{rankDisplay}</div>
             </div>
           </Link>
           <div className="stat-card">
-            <div>⭐</div>
-            <div className="stat-card-label">RATING</div>
+            <Star size={18} />
+            <div className="stat-card-label">Rating</div>
             <div className="stat-card-value">{ratingDisplay}</div>
           </div>
         </div>
@@ -108,13 +113,15 @@ export default function PlayerProfilePage() {
 
       {(tab === "all" || tab === "matches") && (
         <div className="profile-card">
-          <div className="section-title">🕐 RECENT MATCHES</div>
+          <div className="section-title"><TrendingUp size={14} /> Recent matches</div>
           {p.recentMatches.length === 0 && !p.loading && (
             <p className="stat-secondary">No completed matches yet.</p>
           )}
           {p.recentMatches.map((m, i) => (
             <div className="activity-item" key={i}>
-              <div>{m.won ? "🏆" : "❌"}</div>
+              <div className={"activity-icon" + (m.won ? "" : " activity-icon-loss")}>
+                {m.won ? <Trophy size={16} /> : <XCircle size={16} />}
+              </div>
               <div style={{ flex: 1 }}>
                 <div>
                   {m.won ? "Won" : "Lost"} vs{" "}
@@ -132,7 +139,7 @@ export default function PlayerProfilePage() {
 
       {(tab === "all" || tab === "reviews") && (
         <div className="profile-card">
-          <div className="section-title">⭐ REVIEWS</div>
+          <div className="section-title"><Star size={14} /> Reviews</div>
           {p.reviews.length === 0 && (
             <p className="stat-secondary">No reviews yet.</p>
           )}
@@ -144,8 +151,8 @@ export default function PlayerProfilePage() {
                     <svg key={n} width="16" height="16" viewBox="0 0 24 24" style={{ marginRight: 2 }}>
                       <path
                         d="M12 2.5l2.9 6.26 6.6.78-4.9 4.6 1.28 6.6L12 17.6l-5.88 3.14 1.28-6.6-4.9-4.6 6.6-.78z"
-                        fill={n <= r.stars ? "#fbbf24" : "none"}
-                        stroke={n <= r.stars ? "#fbbf24" : "var(--border)"}
+                        fill={n <= r.stars ? "var(--accent)" : "none"}
+                        stroke={n <= r.stars ? "var(--accent)" : "var(--border)"}
                         strokeWidth="1.5"
                       />
                     </svg>
