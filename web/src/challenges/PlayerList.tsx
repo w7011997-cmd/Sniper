@@ -11,7 +11,6 @@ interface Profile {
 export default function PlayerList() {
   const { session } = useAuth();
   const [players, setPlayers] = useState<Profile[]>([]);
-  const [stakeInputs, setStakeInputs] = useState<Record<string, string>>({});
   const [roundsInputs, setRoundsInputs] = useState<Record<string, number>>({});
   const [busyId, setBusyId] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
@@ -29,14 +28,7 @@ export default function PlayerList() {
   }
 
   async function sendChallenge(opponentId: string) {
-    const raw = stakeInputs[opponentId];
-    const coins = Number(raw);
     const rounds = roundsInputs[opponentId] ?? 4;
-
-    if (!raw || isNaN(coins) || coins < 500) {
-      setMessage("Minimum stake is 🪙500.");
-      return;
-    }
 
     setBusyId(opponentId);
     setMessage(null);
@@ -44,7 +36,6 @@ export default function PlayerList() {
     const { error } = await supabase.from("challenges").insert({
       challenger_id: session?.user.id,
       opponent_id: opponentId,
-      stake_cents: Math.round(coins * 100),
       rounds,
     });
 
@@ -66,13 +57,6 @@ export default function PlayerList() {
         >
           <Link to={`/players/${p.id}`} className="player-link">{p.username}</Link>
           <div style={{ display: "flex", gap: 8, marginTop: 6, alignItems: "center" }}>
-            <input
-              type="number"
-              placeholder="🪙 stake (min 500)"
-              style={{ width: 130 }}
-              value={stakeInputs[p.id] ?? ""}
-              onChange={(e) => setStakeInputs({ ...stakeInputs, [p.id]: e.target.value })}
-            />
             <select
               value={roundsInputs[p.id] ?? 4}
               onChange={(e) =>
