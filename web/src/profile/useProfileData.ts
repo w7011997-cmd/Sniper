@@ -2,8 +2,10 @@ import { useEffect, useState } from "react";
 import { useAuth } from "../auth/AuthContext";
 import { supabase } from "../shared/supabaseClient";
 
+export type ActivityKind = "win" | "loss" | "account" | "wallet";
+
 export interface ActivityItem {
-  icon: string;
+  kind: ActivityKind;
   label: string;
   sub: string;
   time: string;
@@ -107,7 +109,7 @@ export function useProfileData(): ProfileData {
         if (won && winStreak === matchActivity.length) winStreak++;
         const opponent = nameById.get(m.player_a === uid ? m.player_b : m.player_a) ?? "opponent";
         matchActivity.push({
-          icon: won ? "🏆" : "❌",
+          kind: won ? "win" : "loss",
           label: won ? "Match won" : "Match lost",
           sub: `vs ${opponent}`,
           time: m.ended_at ? timeAgo(m.ended_at) : "",
@@ -116,8 +118,8 @@ export function useProfileData(): ProfileData {
 
       const accountActivity: ActivityItem[] = profile?.created_at
         ? [
-            { icon: "👤", label: "Welcome to Sniper!", sub: "Account created", time: timeAgo(profile.created_at) },
-            { icon: "👛", label: "Wallet created", sub: "Fund your wallet", time: timeAgo(profile.created_at) },
+            { kind: "account", label: "Welcome to Sniper!", sub: "Account created", time: timeAgo(profile.created_at) },
+            { kind: "wallet", label: "Wallet created", sub: "Fund your wallet", time: timeAgo(profile.created_at) },
           ]
         : [];
 
