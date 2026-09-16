@@ -10,7 +10,6 @@ const RELAY_URL = "wss://billiards-network.onrender.com";
 interface MatchRow {
   id: string;
   status: string;
-  stake_cents: number;
   player_a: string;
   player_b: string;
   winner_id: string | null;
@@ -35,7 +34,7 @@ export default function MatchRoom() {
     const { data: m } = await supabase
       .from("matches")
       .select(
-        "id, status, stake_cents, player_a, player_b, winner_id, rounds, score_a, score_b, current_round"
+        "id, status, player_a, player_b, winner_id, rounds, score_a, score_b, current_round"
       )
       .eq("id", id)
       .single();
@@ -98,7 +97,7 @@ export default function MatchRoom() {
       error
         ? error.message
         : data === "settled"
-        ? "Match complete — settled."
+        ? "Match complete."
         : data === "disputed"
         ? "Your report doesn't match your opponent's — marked as disputed."
         : "Waiting on your opponent to confirm the result."
@@ -106,11 +105,6 @@ export default function MatchRoom() {
     load();
   }
 
-  // Live score sync: the engine posts p1/p2 (stable, player_a/player_b
-  // ordered) every time a pot or foul changes the score. Persisting this
-  // is purely cosmetic \u2014 finalize_match settles money based on the final
-  // report, not these numbers \u2014 so failures here are swallowed quietly
-  // rather than shown as alarming errors.
   useEffect(() => {
     function handleScoreMessage(event: MessageEvent) {
       if (event.data?.type !== "sniper-score-update") return;
@@ -131,7 +125,7 @@ export default function MatchRoom() {
 
   async function forfeit() {
     if (!match) return;
-    if (!window.confirm("Forfeit this match? Your opponent gets the pot minus the house cut.")) return;
+    if (!window.confirm("Forfeit this match? Your opponent will be recorded as the winner.")) return;
     setBusy(true);
     const { error } = await supabase.rpc("forfeit_match", { p_match_id: match.id });
     setBusy(false);
@@ -141,14 +135,9 @@ export default function MatchRoom() {
 
   async function requestRematch() {
     if (!match) return;
-    const raw = window.prompt("Stake amount for the rematch (coins)?");
-    const coins = Number(raw);
-    if (!raw || isNaN(coins) || coins <= 0) return;
-
     setBusy(true);
     const { error } = await supabase.rpc("request_rematch", {
       p_match_id: match.id,
-      p_stake_cents: Math.round(coins * 100),
     });
     setBusy(false);
     setMessage(error ? error.message : "Rematch request sent.");
@@ -217,7 +206,6 @@ export default function MatchRoom() {
     <div>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
         <Link to="/matches" className="stat-secondary">← Back</Link>
-        <div className="stat-secondary">🪙{(match.stake_cents / 100).toFixed(2)}</div>
       </div>
 
       <h1 style={{ fontSize: 20 }}>
