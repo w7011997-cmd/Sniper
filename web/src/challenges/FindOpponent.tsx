@@ -59,14 +59,9 @@ export default function FindOpponent() {
   }, [players, search, filter]);
 
   async function sendChallenge(opponentId: string) {
-    const raw = window.prompt("Stake amount (🪙)?");
-    const naira = Number(raw);
-    if (!raw || isNaN(naira) || naira <= 0) return;
-
     const { error } = await supabase.from("challenges").insert({
       challenger_id: session?.user.id,
       opponent_id: opponentId,
-      stake_cents: Math.round(naira * 100),
     });
 
     setMessage(error ? error.message : "Challenge sent.");
