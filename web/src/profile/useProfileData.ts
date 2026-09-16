@@ -73,7 +73,7 @@ export function useProfileData(): ProfileData {
         supabase.from("player_stats").select("avg_rating, rating_count, wins, losses").eq("player_id", uid).single(),
         supabase
           .from("matches")
-          .select("id, stake_cents, winner_id, player_a, player_b, ended_at")
+          .select("id, winner_id, player_a, player_b, ended_at")
           .eq("status", "completed")
           .or(`player_a.eq.${uid},player_b.eq.${uid}`)
           .order("ended_at", { ascending: false })
@@ -109,7 +109,7 @@ export function useProfileData(): ProfileData {
         matchActivity.push({
           icon: won ? "🏆" : "❌",
           label: won ? "Match won" : "Match lost",
-          sub: `vs ${opponent} — 🪙${(m.stake_cents / 100).toFixed(2)}`,
+          sub: `vs ${opponent}`,
           time: m.ended_at ? timeAgo(m.ended_at) : "",
         });
       }
