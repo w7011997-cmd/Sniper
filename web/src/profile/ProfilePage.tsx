@@ -10,6 +10,7 @@ import {
   Crown,
   Star,
   History,
+  ShoppingBag,
   LogOut,
   TrendingUp,
 } from "lucide-react";
@@ -100,14 +101,22 @@ export default function ProfilePage() {
         )}
       </div>
 
-      <Link to="/matches/history" className="quick-link" style={{ textDecoration: "none", color: "inherit", marginBottom: 16 }}>
-        <div className="quick-link-icon"><History size={16} /></div>
-        <div style={{ flex: 1 }}>
-          <div className="quick-link-title">Match history</div>
-          <div className="stat-secondary">View your past matches</div>
-        </div>
-        <div className="chevron">›</div>
-      </Link>
+      <div className="quicklinks-row">
+        <Link to="/shop" className="quick-link" style={{ textDecoration: "none", color: "inherit" }}>
+          <div className="quick-link-icon"><ShoppingBag size={16} /></div>
+          <div style={{ flex: 1 }}>
+            <div className="quick-link-title">Shop</div>
+            <div className="stat-secondary">Cues, trails & tables</div>
+          </div>
+        </Link>
+        <Link to="/matches/history" className="quick-link" style={{ textDecoration: "none", color: "inherit" }}>
+          <div className="quick-link-icon"><History size={16} /></div>
+          <div style={{ flex: 1 }}>
+            <div className="quick-link-title">Match history</div>
+            <div className="stat-secondary">Past matches</div>
+          </div>
+        </Link>
+      </div>
 
       <div className="profile-card">
         <div className="section-title"><TrendingUp size={14} /> Recent activity</div>

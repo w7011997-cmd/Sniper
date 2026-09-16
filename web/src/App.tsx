@@ -12,6 +12,7 @@ import ConversationThread from "./messages/ConversationThread";
 import ProfilePage from "./profile/ProfilePage";
 import PlayerProfilePage from "./players/PlayerProfilePage";
 import WalletPage from "./wallet/WalletPage";
+import ShopPage from "./shop/ShopPage";
 import MatchRoom from "./game/MatchRoom";
 import { usePresenceHeartbeat } from "./shared/usePresenceHeartbeat";
 import { useChallengerAutoRedirect } from "./challenges/useChallengerAutoRedirect";
@@ -46,6 +47,7 @@ function Gate() {
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/players/:id" element={<PlayerProfilePage />} />
           <Route path="/wallet" element={<WalletPage />} />
+          <Route path="/shop" element={<ShopPage />} />
           <Route path="/match/:id" element={<MatchRoom />} />
           <Route path="/matches/history" element={<MatchHistoryPage />} />
         </Routes>
