@@ -10,6 +10,8 @@ import RankingsPage from "./rankings/RankingsPage";
 import MessagesPage from "./messages/MessagesPage";
 import ConversationThread from "./messages/ConversationThread";
 import ProfilePage from "./profile/ProfilePage";
+import ActivityHistoryPage from "./profile/ActivityHistoryPage";
+import ReviewsHistoryPage from "./profile/ReviewsHistoryPage";
 import PlayerProfilePage from "./players/PlayerProfilePage";
 import WalletPage from "./wallet/WalletPage";
 import ShopPage from "./shop/ShopPage";
@@ -45,6 +47,8 @@ function Gate() {
           <Route path="/messages" element={<MessagesPage />} />
           <Route path="/messages/:userId" element={<ConversationThread />} />
           <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/profile/activity" element={<ActivityHistoryPage />} />
+          <Route path="/profile/reviews" element={<ReviewsHistoryPage />} />
           <Route path="/players/:id" element={<PlayerProfilePage />} />
           <Route path="/wallet" element={<WalletPage />} />
           <Route path="/shop" element={<ShopPage />} />
