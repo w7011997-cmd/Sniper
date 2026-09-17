@@ -103,6 +103,7 @@ export default function ProfilePage() {
 
       <div className="quicklinks-row">
         <Link to="/shop" className="quick-link" style={{ textDecoration: "none", color: "inherit" }}>
+          <span className="quick-link-badge">Visit here</span>
           <div className="quick-link-icon"><ShoppingBag size={16} /></div>
           <div style={{ flex: 1 }}>
             <div className="quick-link-title">Shop</div>
