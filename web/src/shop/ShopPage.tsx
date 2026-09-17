@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Browser } from "@capacitor/browser";
 import { Capacitor } from "@capacitor/core";
-import { ChevronLeft, ShoppingBag, Lock, Check, Loader2 } from "lucide-react";
+import { ChevronLeft, ShoppingBag, Lock, Check, Loader2, X } from "lucide-react";
 import { supabase } from "../shared/supabaseClient";
 import { useShopItems, type ShopCategory, type ShopItem } from "./useShopItems";
 import "../profile/profile.css";
@@ -15,6 +15,7 @@ const TABS: { key: ShopCategory; label: string }[] = [
 ];
 
 const CURRENCIES = ["USD", "NGN", "GBP", "EUR", "GHS", "KES", "ZAR"];
+const CURRENCY_TIP_KEY = "sniper_shop_currency_tip_count";
 
 export default function ShopPage() {
   const navigate = useNavigate();
@@ -24,6 +25,15 @@ export default function ShopPage() {
   const [rate, setRate] = useState(1);
   const [busyId, setBusyId] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
+  const [showCurrencyTip, setShowCurrencyTip] = useState(false);
+
+  useEffect(() => {
+    const seen = Number(localStorage.getItem(CURRENCY_TIP_KEY) ?? "0");
+    if (seen < 2) {
+      setShowCurrencyTip(true);
+      localStorage.setItem(CURRENCY_TIP_KEY, String(seen + 1));
+    }
+  }, []);
 
   useEffect(() => {
     if (currency === "USD") {
@@ -82,7 +92,7 @@ export default function ShopPage() {
 
   return (
     <div className="profile-page">
-      <div className="profile-topbar">
+      <div className="profile-topbar" style={{ position: "relative" }}>
         <button className="icon-circle-btn" onClick={() => navigate(-1)}>
           <ChevronLeft size={18} />
         </button>
@@ -91,7 +101,10 @@ export default function ShopPage() {
         </h2>
         <select
           value={currency}
-          onChange={(e) => setCurrency(e.target.value)}
+          onChange={(e) => {
+            setCurrency(e.target.value);
+            setShowCurrencyTip(false);
+          }}
           className="shop-currency-select"
         >
           {CURRENCIES.map((c) => (
@@ -100,6 +113,20 @@ export default function ShopPage() {
             </option>
           ))}
         </select>
+
+        {showCurrencyTip && (
+          <div className="shop-currency-tip">
+            <button
+              type="button"
+              className="shop-currency-tip-close"
+              onClick={() => setShowCurrencyTip(false)}
+              aria-label="Dismiss"
+            >
+              <X size={12} />
+            </button>
+            Tap here to change your currency
+          </div>
+        )}
       </div>
 
       <div className="shop-tabs">

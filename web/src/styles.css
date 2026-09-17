@@ -500,3 +500,22 @@ body,
   border-radius: 10px;
   margin: 12px 0;
 }
+
+.quick-link {
+  position: relative;
+}
+
+.quick-link-badge {
+  position: absolute;
+  top: -8px;
+  right: -6px;
+  background: #22c55e;
+  color: #0b1f14;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  padding: 3px 7px;
+  border-radius: 9999px;
+  box-shadow: 0 0 0 2px var(--bg);
+}

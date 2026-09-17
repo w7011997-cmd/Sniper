@@ -19,6 +19,37 @@ interface MatchRow {
   current_round: number;
 }
 
+interface CueConfig {
+  shaftColour?: string;
+  buttColour?: string;
+  jointColour?: string;
+  ferruleColour?: string;
+  grain?: boolean;
+}
+
+interface Cosmetics {
+  ownCue: CueConfig | null;
+  opponentCue: CueConfig | null;
+  tableClothColour: string | null;
+}
+
+async function fetchEquippedConfig(userId: string, category: string): Promise<Record<string, unknown> | null> {
+  const { data: equipped } = await supabase
+    .from("user_equipped_items")
+    .select("item_id")
+    .eq("user_id", userId)
+    .eq("category", category)
+    .maybeSingle();
+  if (!equipped) return null;
+
+  const { data: item } = await supabase
+    .from("shop_items")
+    .select("config")
+    .eq("id", equipped.item_id)
+    .maybeSingle();
+  return (item?.config as Record<string, unknown>) ?? null;
+}
+
 export default function MatchRoom() {
   const { id } = useParams<{ id: string }>();
   const { session } = useAuth();
@@ -28,6 +59,11 @@ export default function MatchRoom() {
   const [message, setMessage] = useState<string | null>(null);
   const [alreadyRated, setAlreadyRated] = useState(false);
   const [localGameOver, setLocalGameOver] = useState(false);
+  const [cosmetics, setCosmetics] = useState<Cosmetics>({
+    ownCue: null,
+    opponentCue: null,
+    tableClothColour: null,
+  });
 
   async function load() {
     if (!id || !session) return;
@@ -58,6 +94,25 @@ export default function MatchRoom() {
         .maybeSingle();
       setAlreadyRated(!!rating);
     }
+
+    // Equipped cosmetics are purely visual and loaded once per match: your
+    // own cue + table felt always, and your opponent's cue only when you're
+    // actually one of the two players (the engine has no "opponent" concept
+    // for a spectator).
+    const isPlayerNow = session.user.id === m.player_a || session.user.id === m.player_b;
+    const oppIdNow = session.user.id === m.player_a ? m.player_b : m.player_a;
+
+    const [ownCue, tableConfig, opponentCue] = await Promise.all([
+      fetchEquippedConfig(session.user.id, "cue"),
+      fetchEquippedConfig(session.user.id, "table"),
+      isPlayerNow ? fetchEquippedConfig(oppIdNow, "cue") : Promise.resolve(null),
+    ]);
+
+    setCosmetics({
+      ownCue: (ownCue as CueConfig) ?? null,
+      opponentCue: (opponentCue as CueConfig) ?? null,
+      tableClothColour: (tableConfig?.clothColour as string) ?? null,
+    });
   }
 
   useEffect(() => {
@@ -194,10 +249,25 @@ export default function MatchRoom() {
     params.set("opponent.userId", oppId);
     params.set("opponent.userName", oppName);
     if (isPlayerA) params.set("first", "");
+
+    if (cosmetics.ownCue) {
+      Object.entries(cosmetics.ownCue).forEach(([k, v]) => {
+        if (v !== undefined) params.set(`custom.cue.${k}`, String(v));
+      });
+    }
+    if (cosmetics.opponentCue) {
+      Object.entries(cosmetics.opponentCue).forEach(([k, v]) => {
+        if (v !== undefined) params.set(`opponent.custom.cue.${k}`, String(v));
+      });
+    }
   } else {
     params.set("userId", session.user.id);
     params.set("userName", "Spectator");
     params.set("spectator", "");
+  }
+
+  if (cosmetics.tableClothColour) {
+    params.set("custom.table.clothColour", cosmetics.tableClothColour);
   }
 
   const embedUrl = `${ENGINE_BASE_URL}/index.html?${params.toString()}`;
