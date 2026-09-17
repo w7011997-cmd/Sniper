@@ -41,7 +41,7 @@ jobs:
         run: npx cap sync android
 
       - name: Generate app icons
-        run: npx capacitor-assets generate --android
+        run: npx @capacitor/assets generate --android
 
       - name: Add Firebase config
         run: cp firebase/google-services.json android/app/google-services.json
