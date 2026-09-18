@@ -4,7 +4,7 @@ import {
   Settings,
   User,
   Mail,
-  Wallet,
+  Layers,
   Trophy,
   XCircle,
   Crown,
@@ -17,10 +17,6 @@ import {
 import { supabase } from "../shared/supabaseClient";
 import { usePushRegistration } from "../push/usePushRegistration";
 import { useProfileData, type ActivityKind } from "./useProfileData";
-import discovrIcon from "../assets/discovr-icon.png";
-import chatifyIcon from "../assets/chatify-icon.png";
-
-const PREVIEW_COUNT = 5;
 
 function StatCard({ icon, label, value, color }: { icon: React.ReactNode; label: string; value: string; color?: string }) {
   return (
@@ -35,27 +31,8 @@ function StatCard({ icon, label, value, color }: { icon: React.ReactNode; label:
 function ActivityIcon({ kind }: { kind: ActivityKind }) {
   if (kind === "win") return <div className="activity-icon"><Trophy size={16} /></div>;
   if (kind === "loss") return <div className="activity-icon activity-icon-loss"><XCircle size={16} /></div>;
-  if (kind === "wallet") return <div className="activity-icon"><Wallet size={16} /></div>;
+  if (kind === "wallet") return <div className="activity-icon"><Layers size={16} /></div>;
   return <div className="activity-icon"><User size={16} /></div>;
-}
-
-function SeeMoreLink({ to }: { to: string }) {
-  return (
-    <Link
-      to={to}
-      style={{
-        display: "block",
-        textAlign: "center",
-        padding: "10px 0 2px",
-        color: "var(--accent)",
-        fontSize: 14,
-        fontWeight: 600,
-        textDecoration: "none",
-      }}
-    >
-      See more
-    </Link>
-  );
 }
 
 export default function ProfilePage() {
@@ -95,13 +72,11 @@ export default function ProfilePage() {
           </div>
           <div className="chevron">›</div>
         </div>
-        <Link to="/wallet" className="profile-row" style={{ textDecoration: "none", color: "inherit" }}>
-          <div className="profile-row-icon"><Wallet size={16} /></div>
+        <Link to="/collections" className="profile-row" style={{ textDecoration: "none", color: "inherit" }}>
+          <div className="profile-row-icon"><Layers size={16} /></div>
           <div style={{ flex: 1 }}>
-            <div className="stat-secondary">Wallet balance</div>
-            <div className="profile-row-value" style={{ color: "#22c55e" }}>
-              {p.balanceCents !== null ? `₦${(p.balanceCents / 100).toFixed(2)}` : "..."}
-            </div>
+            <div className="stat-secondary">My collections</div>
+            <div className="profile-row-value">Cues, trails & tables you own</div>
           </div>
           <div className="chevron">›</div>
         </Link>
@@ -153,7 +128,7 @@ export default function ProfilePage() {
             </div>
           </div>
         )}
-        {p.activity.slice(0, PREVIEW_COUNT).map((a, i) => (
+        {p.activity.slice(0, 4).map((a, i) => (
           <div className="activity-item" key={i}>
             <ActivityIcon kind={a.kind} />
             <div style={{ flex: 1 }}>
@@ -163,7 +138,6 @@ export default function ProfilePage() {
             <div className="stat-secondary">{a.time}</div>
           </div>
         ))}
-        {p.activity.length > PREVIEW_COUNT && <SeeMoreLink to="/profile/activity" />}
       </div>
 
       <div className="profile-card">
@@ -171,7 +145,7 @@ export default function ProfilePage() {
         {p.reviews.length === 0 && (
           <p className="stat-secondary">No reviews yet. Play matches to get rated!</p>
         )}
-        {p.reviews.slice(0, PREVIEW_COUNT).map((r, i) => (
+        {p.reviews.map((r, i) => (
           <div key={i} style={{ padding: "10px 0", borderTop: i > 0 ? "1px solid var(--border)" : undefined }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
               <div style={{ display: "flex" }}>
@@ -192,39 +166,6 @@ export default function ProfilePage() {
             <div className="stat-secondary">— {r.raterName}</div>
           </div>
         ))}
-        {p.reviews.length > PREVIEW_COUNT && <SeeMoreLink to="/profile/reviews" />}
-      </div>
-
-      <div className="profile-card">
-        <div className="section-title">More by Peter Wisdom K.</div>
-        <div style={{ display: "flex", gap: 24, padding: "8px 4px" }}>
-          <a
-            href="https://apkpure.com/discovr/com.learnermax498.discovr"
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{ textDecoration: "none", color: "inherit", textAlign: "center", width: 72 }}
-          >
-            <img
-              src={discovrIcon}
-              alt="Discovr"
-              style={{ width: 56, height: 56, borderRadius: 16, objectFit: "cover" }}
-            />
-            <div className="stat-secondary" style={{ marginTop: 6 }}>Discovr</div>
-          </a>
-          <a
-            href="https://apkpure.com/chatify/com.unite.noname"
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{ textDecoration: "none", color: "inherit", textAlign: "center", width: 72 }}
-          >
-            <img
-              src={chatifyIcon}
-              alt="Chatify"
-              style={{ width: 56, height: 56, borderRadius: 16, objectFit: "cover" }}
-            />
-            <div className="stat-secondary" style={{ marginTop: 6 }}>Chatify</div>
-          </a>
-        </div>
       </div>
 
       <button className="signout-btn" onClick={() => supabase.auth.signOut()}>

@@ -1,0 +1,19 @@
+.collections-shop-cta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: var(--accent);
+  color: #fff;
+  font-weight: 700;
+  font-size: 14px;
+  border-radius: 9999px;
+  padding: 12px 20px;
+  text-decoration: none;
+  margin-bottom: 16px;
+}
+
+.collections-shop-cta:hover {
+  background: var(--accent-hover);
+  text-decoration: none;
+}
