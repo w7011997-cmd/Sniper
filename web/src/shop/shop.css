@@ -137,3 +137,45 @@
   align-items: center;
   justify-content: center;
 }
+
+.shop-buy-confirm-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+  padding: 16px;
+}
+
+.shop-buy-confirm-modal {
+  background: var(--surface);
+  border-radius: 14px;
+  padding: 20px;
+  max-width: 320px;
+  width: 100%;
+}
+
+.shop-buy-confirm-modal p {
+  margin: 0 0 16px;
+  color: var(--surface-2);
+}
+
+.shop-buy-confirm-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.shop-buy-confirm-actions button {
+  border-radius: 9999px;
+  padding: 8px 16px;
+  border: 1px solid var(--accent);
+  background: transparent;
+}
+
+.shop-buy-confirm-actions button.primary {
+  background: var(--accent);
+  border-color: var(--accent);
+}

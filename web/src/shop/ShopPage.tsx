@@ -26,6 +26,7 @@ export default function ShopPage() {
   const [busyId, setBusyId] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   const [showCurrencyTip, setShowCurrencyTip] = useState(false);
+  const [confirmItem, setConfirmItem] = useState<ShopItem | null>(null);
 
   useEffect(() => {
     const seen = Number(localStorage.getItem(CURRENCY_TIP_KEY) ?? "0");
@@ -161,7 +162,7 @@ export default function ShopPage() {
                 {!owned && (
                   <>
                     <div className="shop-item-price">{formatPrice(item)}</div>
-                    <button type="button" disabled={busy || pending} onClick={() => buy(item)}>
+                    <button type="button" disabled={busy || pending} onClick={() => setConfirmItem(item)}>
                       {busy ? <Loader2 size={14} className="shop-spin" /> : pending ? "Pending..." : <><Lock size={14} /> Buy</>}
                     </button>
                   </>
@@ -184,6 +185,32 @@ export default function ShopPage() {
           <p className="stat-secondary">Nothing here yet.</p>
         )}
       </div>
+
+      {confirmItem && (
+        <div className="shop-buy-confirm-overlay" onClick={() => setConfirmItem(null)}>
+          <div className="shop-buy-confirm-modal" onClick={(e) => e.stopPropagation()}>
+            <p>
+              If you aren't in Nigeria, you can pay using the "Card" option at checkout.
+            </p>
+            <div className="shop-buy-confirm-actions">
+              <button type="button" onClick={() => setConfirmItem(null)}>
+                Cancel
+              </button>
+              <button
+                type="button"
+                className="primary"
+                onClick={() => {
+                  const item = confirmItem;
+                  setConfirmItem(null);
+                  buy(item);
+                }}
+              >
+                Ok, continue
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
