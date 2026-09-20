@@ -16,7 +16,6 @@ import ShopPage from "./shop/ShopPage";
 import CollectionsPage from "./collections/CollectionsPage";
 import MatchRoom from "./game/MatchRoom";
 import { usePresenceHeartbeat } from "./shared/usePresenceHeartbeat";
-import { useChallengerAutoRedirect } from "./challenges/useChallengerAutoRedirect";
 
 function MatchesPage() {
   return (
@@ -34,7 +33,6 @@ function Gate() {
   if (loading) return <p>Loading...</p>;
   if (!session) return <AuthForm />;
   usePresenceHeartbeat();
-  useChallengerAutoRedirect();
 
   return (
     <div className="app-shell">

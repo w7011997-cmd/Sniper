@@ -25,9 +25,11 @@ export default function RankingsPage() {
     async function load() {
       const { data } = await supabase
         .from("player_stats")
-        .select("player_id, username, wins, losses, country")
+        .select("player_id, username, wins, losses, country, avg_rating")
         .order("wins", { ascending: false })
-        .order("losses", { ascending: true });
+        .order("losses", { ascending: true })
+        .order("avg_rating", { ascending: false, nullsFirst: false })
+        .order("player_id", { ascending: true });
       setRows((data as RankRow[]) ?? []);
     }
     load();

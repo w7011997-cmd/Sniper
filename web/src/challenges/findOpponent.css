@@ -149,3 +149,15 @@
   background: var(--fo-green);
   flex-shrink: 0;
 }
+
+.fo-accepted-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+.fo-accepted-tip {
+  font-size: 11px;
+  color: var(--accent);
+}

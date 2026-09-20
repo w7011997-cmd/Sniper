@@ -26,7 +26,9 @@ export default function ShopPage() {
   const [busyId, setBusyId] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   const [showCurrencyTip, setShowCurrencyTip] = useState(false);
-  const [confirmItem, setConfirmItem] = useState<ShopItem | null>(null);
+  const [confirmItem, setConfirmItem] = useState<
+    { item: ShopItem; durationMonths: number | null } | null
+  >(null);
 
   useEffect(() => {
     const seen = Number(localStorage.getItem(CURRENCY_TIP_KEY) ?? "0");
@@ -47,18 +49,28 @@ export default function ShopPage() {
       .catch(() => setRate(1));
   }, [currency]);
 
-  function formatPrice(item: ShopItem) {
-    const amount = (item.price_usd_cents / 100) * rate;
+  const SUBSCRIPTION_MULTIPLIER: Record<number, number> = { 1: 1, 2: 1.8, 3: 2.5 };
+
+  function formatAmountCents(cents: number) {
+    const amount = (cents / 100) * rate;
     const symbol = currency === "USD" ? "$" : currency === "NGN" ? "₦" : currency === "GBP" ? "£" : currency === "EUR" ? "€" : "";
     return symbol ? `${symbol}${amount.toFixed(2)}` : `${amount.toFixed(2)} ${currency}`;
   }
 
-  async function buy(item: ShopItem) {
+  function formatPrice(item: ShopItem) {
+    return formatAmountCents(item.price_usd_cents);
+  }
+
+  function formatSubscriptionPrice(item: ShopItem, months: number) {
+    return formatAmountCents(Math.round(item.price_usd_cents * SUBSCRIPTION_MULTIPLIER[months]));
+  }
+
+  async function buy(item: ShopItem, durationMonths: number | null = null) {
     setBusyId(item.id);
     setMessage(null);
 
     const { data, error } = await supabase.functions.invoke("initialize-purchase", {
-      body: { item_id: item.id, currency },
+      body: { item_id: item.id, currency, duration_months: durationMonths },
     });
 
     setBusyId(null);
@@ -156,13 +168,37 @@ export default function ShopPage() {
 
           return (
             <div key={item.id} className="shop-item-card">
+              {item.image_url ? (
+                <img src={item.image_url} alt={item.name} className="shop-item-image" />
+              ) : (
+                <div className="shop-item-image shop-item-image-placeholder" />
+              )}
               <div className="shop-item-name">{item.name}</div>
               {item.description && <div className="stat-secondary">{item.description}</div>}
               <div className="shop-item-footer">
-                {!owned && (
+                {!owned && item.category === "cue_trail" && (
+                  <div className="shop-trail-tiers">
+                    {[1, 2, 3].map((months) => (
+                      <button
+                        key={months}
+                        type="button"
+                        className="shop-trail-tier-btn"
+                        disabled={busy || pending}
+                        onClick={() => setConfirmItem({ item, durationMonths: months })}
+                      >
+                        {months}mo - {formatSubscriptionPrice(item, months)}
+                      </button>
+                    ))}
+                  </div>
+                )}
+                {!owned && item.category !== "cue_trail" && (
                   <>
                     <div className="shop-item-price">{formatPrice(item)}</div>
-                    <button type="button" disabled={busy || pending} onClick={() => setConfirmItem(item)}>
+                    <button
+                      type="button"
+                      disabled={busy || pending}
+                      onClick={() => setConfirmItem({ item, durationMonths: null })}
+                    >
                       {busy ? <Loader2 size={14} className="shop-spin" /> : pending ? "Pending..." : <><Lock size={14} /> Buy</>}
                     </button>
                   </>
@@ -200,9 +236,9 @@ export default function ShopPage() {
                 type="button"
                 className="primary"
                 onClick={() => {
-                  const item = confirmItem;
+                  const c = confirmItem;
                   setConfirmItem(null);
-                  buy(item);
+                  buy(c.item, c.durationMonths);
                 }}
               >
                 Ok, continue

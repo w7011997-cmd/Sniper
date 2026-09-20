@@ -179,3 +179,31 @@
   background: var(--accent);
   border-color: var(--accent);
 }
+
+.shop-item-image {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: 10px;
+  object-fit: cover;
+  margin-bottom: 10px;
+  background: var(--surface-2);
+}
+
+.shop-item-image-placeholder {
+  background: linear-gradient(135deg, var(--accent) 0%, var(--surface-2) 100%);
+  opacity: 0.5;
+}
+
+.shop-trail-tiers {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+}
+
+.shop-trail-tier-btn {
+  width: 100%;
+  border-radius: 9999px;
+  padding: 6px 12px;
+  font-size: 12px;
+}
