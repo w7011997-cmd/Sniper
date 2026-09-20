@@ -32,6 +32,7 @@ interface Cosmetics {
   opponentCue: CueConfig | null;
   tableClothColour: string | null;
   trailColour: string | null;
+  opponentTrailColour: string | null;
 }
 
 async function fetchEquippedConfig(userId: string, category: string): Promise<Record<string, unknown> | null> {
@@ -65,6 +66,7 @@ export default function MatchRoom() {
     opponentCue: null,
     tableClothColour: null,
     trailColour: null,
+    opponentTrailColour: null,
   });
 
   async function load() {
@@ -104,11 +106,12 @@ export default function MatchRoom() {
     const isPlayerNow = session.user.id === m.player_a || session.user.id === m.player_b;
     const oppIdNow = session.user.id === m.player_a ? m.player_b : m.player_a;
 
-    const [ownCue, tableConfig, opponentCue, trailConfig] = await Promise.all([
+    const [ownCue, tableConfig, opponentCue, trailConfig, opponentTrailConfig] = await Promise.all([
       fetchEquippedConfig(session.user.id, "cue"),
       fetchEquippedConfig(session.user.id, "table"),
       isPlayerNow ? fetchEquippedConfig(oppIdNow, "cue") : Promise.resolve(null),
       fetchEquippedConfig(session.user.id, "cue_trail"),
+      isPlayerNow ? fetchEquippedConfig(oppIdNow, "cue_trail") : Promise.resolve(null),
     ]);
 
     setCosmetics({
@@ -116,6 +119,7 @@ export default function MatchRoom() {
       opponentCue: (opponentCue as CueConfig) ?? null,
       tableClothColour: (tableConfig?.clothColour as string) ?? null,
       trailColour: (trailConfig?.colour as string) ?? null,
+      opponentTrailColour: (opponentTrailConfig?.colour as string) ?? null,
     });
   }
 
@@ -263,6 +267,9 @@ export default function MatchRoom() {
       Object.entries(cosmetics.opponentCue).forEach(([k, v]) => {
         if (v !== undefined) params.set(`opponent.custom.cue.${k}`, String(v));
       });
+    }
+    if (cosmetics.opponentTrailColour) {
+      params.set("opponent.custom.trail.colour", cosmetics.opponentTrailColour);
     }
   } else {
     params.set("userId", session.user.id);
