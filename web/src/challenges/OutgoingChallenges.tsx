@@ -14,7 +14,6 @@ export default function OutgoingChallenges() {
   const { session } = useAuth();
   const navigate = useNavigate();
   const [challenges, setChallenges] = useState<OutgoingChallenge[]>([]);
-  const [message, setMessage] = useState<string | null>(null);
 
   async function load() {
     if (!session) return;
@@ -75,7 +74,6 @@ export default function OutgoingChallenges() {
   return (
     <div>
       <h2>Sent challenges</h2>
-      {message && <p role="alert">{message}</p>}
       {challenges.map((c) => (
         <div
           key={c.id}
