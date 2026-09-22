@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../auth/AuthContext";
 import { supabase } from "../shared/supabaseClient";
+import "./findOpponent.css";
 
 interface OutgoingChallenge {
   id: string;
@@ -88,10 +89,10 @@ export default function OutgoingChallenges() {
           <span style={{ flex: 1 }}>{c.opponent?.username ?? "Someone"}</span>
           {c.status === "accepted" && c.matchId ? (
             <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 4 }}>
-              <button type="button" onClick={() => navigate(`/match/${c.matchId}`)}>
+              <button type="button" className="fo-challenge-btn" onClick={() => navigate(`/match/${c.matchId}`)}>
                 Enter Match
               </button>
-              <span className="stat-secondary" style={{ fontSize: 11 }}>
+              <span style={{ fontSize: 11, color: "#39ff88" }}>
                 {c.opponent?.username ?? "They"} accepted your challenge
               </span>
             </div>
