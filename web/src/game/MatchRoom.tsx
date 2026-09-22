@@ -13,6 +13,7 @@ interface MatchRow {
   player_a: string;
   player_b: string;
   winner_id: string | null;
+  forfeited_by: string | null;
   rounds: number;
   score_a: number;
   score_b: number;
@@ -74,7 +75,7 @@ export default function MatchRoom() {
     const { data: m } = await supabase
       .from("matches")
       .select(
-        "id, status, player_a, player_b, winner_id, rounds, score_a, score_b, current_round"
+        "id, status, player_a, player_b, winner_id, forfeited_by, rounds, score_a, score_b, current_round"
       )
       .eq("id", id)
       .single();
@@ -309,6 +310,17 @@ export default function MatchRoom() {
           </>
         )}
       </h1>
+
+      {match.status === "completed" && match.forfeited_by && match.winner_id === session.user.id && (
+        <div className="stat-primary" style={{ padding: 12, borderRadius: 12, background: "var(--surface)", marginBottom: 8 }}>
+          <div style={{ fontSize: 20, fontWeight: 700 }}>
+            You won! Score: {myScore}-{oppScore}
+          </div>
+          <div className="stat-secondary" style={{ fontSize: 13 }}>
+            {names[match.forfeited_by] ?? "Your opponent"} forfeited the match
+          </div>
+        </div>
+      )}
 
       {match.status === "in_progress" && !localGameOver && (
         <p className="stat-secondary">
