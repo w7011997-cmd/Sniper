@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
-import { ChevronLeft, Trophy, XCircle, Crown, Star, TrendingUp } from "lucide-react";
+import { ChevronLeft, MessageCircle, Trophy, XCircle, Crown, Star, TrendingUp } from "lucide-react";
 import { usePlayerProfile } from "./usePlayerProfile";
 
 function timeAgo(iso: string | null) {
@@ -48,7 +48,9 @@ export default function PlayerProfilePage() {
           <ChevronLeft size={18} />
         </button>
         <h2 style={{ margin: 0 }}>{p.loading ? "..." : p.username}</h2>
-        <div style={{ width: 36 }} />
+        <Link to={`/messages/${id}`} className="icon-circle-btn" aria-label="Message this player">
+          <MessageCircle size={16} />
+        </Link>
       </div>
 
       <div className="profile-card">

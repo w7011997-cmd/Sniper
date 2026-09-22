@@ -24,6 +24,13 @@ export default function ConversationThread() {
   const [showMenu, setShowMenu] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
 
+  // True once I've sent at least one message and they haven't replied at
+  // all yet — mirrors the enforce_first_message_limit DB trigger exactly,
+  // so the input disables proactively instead of only after a failed send.
+  const hasSentAny = session ? messages.some((m) => m.sender_id === session.user.id) : false;
+  const hasReceivedAny = userId ? messages.some((m) => m.sender_id === userId) : false;
+  const awaitingReply = hasSentAny && !hasReceivedAny;
+
   async function load() {
     if (!session || !userId) return;
 
@@ -91,7 +98,7 @@ export default function ConversationThread() {
   }, [messages.length]);
 
   async function send() {
-    if (!draft.trim() || !session || !userId) return;
+    if (!draft.trim() || !session || !userId || awaitingReply) return;
     setSending(true);
     setSendError(null);
     const { error } = await supabase.from("direct_messages").insert({
@@ -101,7 +108,11 @@ export default function ConversationThread() {
     });
     setSending(false);
     if (error) {
-      setSendError(error.message);
+      setSendError(
+        error.message.includes("AWAITING_REPLY")
+          ? "You already sent a message — wait for them to reply before sending another."
+          : error.message
+      );
     } else {
       setDraft("");
       load();
@@ -169,17 +180,24 @@ export default function ConversationThread() {
 
       {sendError && <p role="alert" style={{ padding: "0 16px" }}>{sendError}</p>}
 
+      {awaitingReply && !sendError && (
+        <p className="stat-secondary" style={{ padding: "0 16px", fontSize: 12 }}>
+          Waiting for {otherUsername || "them"} to reply before you can send another message.
+        </p>
+      )}
+
       <div className="thread-input-row">
         <input
-          placeholder="Message..."
+          placeholder={awaitingReply ? "Waiting for a reply..." : "Message..."}
           value={draft}
+          disabled={awaitingReply}
           onChange={(e) => setDraft(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && send()}
         />
         <button
           type="button"
           className="thread-send-btn"
-          disabled={sending || !draft.trim()}
+          disabled={sending || !draft.trim() || awaitingReply}
           onClick={send}
           aria-label="Send"
         >
