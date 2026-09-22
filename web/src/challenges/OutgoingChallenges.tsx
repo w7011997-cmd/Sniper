@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../auth/AuthContext";
 import { supabase } from "../shared/supabaseClient";
 import "./findOpponent.css";
@@ -86,7 +86,15 @@ export default function OutgoingChallenges() {
             borderBottom: "1px solid var(--border)",
           }}
         >
-          <span style={{ flex: 1 }}>{c.opponent?.username ?? "Someone"}</span>
+          <span style={{ flex: 1 }}>
+            {c.opponent ? (
+              <Link to={`/players/${c.opponent.id}`} style={{ color: "inherit", textDecoration: "none" }}>
+                {c.opponent.username}
+              </Link>
+            ) : (
+              "Someone"
+            )}
+          </span>
           {c.status === "accepted" && c.matchId ? (
             <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 4 }}>
               <button type="button" className="fo-challenge-btn" onClick={() => navigate(`/match/${c.matchId}`)}>

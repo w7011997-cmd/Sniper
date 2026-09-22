@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../auth/AuthContext";
 import { supabase } from "../shared/supabaseClient";
 
 interface IncomingChallenge {
   id: string;
-  challenger: { username: string } | null;
+  challenger: { id: string; username: string } | null;
 }
 
 export default function IncomingChallenges() {
@@ -22,7 +22,7 @@ export default function IncomingChallenges() {
   async function load() {
     const { data } = await supabase
       .from("challenges")
-      .select("id, challenger:challenger_id(username)")
+      .select("id, challenger:challenger_id(id, username)")
       .eq("opponent_id", session?.user.id ?? "")
       .eq("status", "pending");
     setChallenges((data as any) ?? []);
@@ -71,7 +71,13 @@ export default function IncomingChallenges() {
           }}
         >
           <span style={{ flex: 1 }}>
-            {c.challenger?.username ?? "Someone"}
+            {c.challenger ? (
+              <Link to={`/players/${c.challenger.id}`} style={{ color: "inherit", textDecoration: "none" }}>
+                {c.challenger.username}
+              </Link>
+            ) : (
+              "Someone"
+            )}
           </span>
           <button type="button" disabled={busyId === c.id} onClick={() => respond(c.id, true)}>
             Accept
