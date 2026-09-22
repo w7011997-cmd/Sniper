@@ -1,23 +1,18 @@
-.find-opponent {
-  --fo-green: #39ff88;
-  --fo-purple: #a855f7;
-}
-
 .fo-stats-banner {
   display: flex;
   align-items: center;
   justify-content: space-around;
-  border: 1px solid var(--fo-green);
-  border-radius: 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
   padding: 16px;
   margin: 12px 0;
-  background: rgba(57, 255, 136, 0.06);
 }
 
 .fo-stat-number {
   font-size: 22px;
   font-weight: 800;
-  color: var(--fo-green);
+  color: var(--accent);
   text-align: center;
 }
 
@@ -56,12 +51,12 @@
 }
 
 .fo-chip-active {
-  border-color: var(--fo-green);
-  color: var(--fo-green);
+  border-color: var(--accent);
+  color: var(--accent);
 }
 
 .fo-list-header {
-  color: var(--fo-green);
+  color: var(--text-secondary);
   font-weight: 700;
   font-size: 13px;
   margin: 12px 0 4px;
@@ -71,8 +66,9 @@
   display: flex;
   align-items: center;
   gap: 12px;
+  background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 14px;
+  border-radius: 16px;
   padding: 12px;
   margin: 8px 0;
 }
@@ -84,6 +80,9 @@
 
 .fo-username {
   font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .fo-substats {
@@ -97,15 +96,15 @@
 }
 
 .fo-trophy-number {
-  color: var(--fo-purple);
+  color: var(--accent);
   font-weight: 800;
   font-size: 16px;
 }
 
 .fo-challenge-btn {
-  border: 1px solid var(--fo-purple);
-  color: var(--fo-purple);
-  background: transparent;
+  border: 1px solid var(--accent);
+  background: var(--accent);
+  color: #ffffff;
   border-radius: 9999px;
   padding: 8px 14px;
   font-size: 13px;
@@ -113,8 +112,9 @@
   flex-shrink: 0;
 }
 
-.fo-challenge-btn:hover {
-  background: rgba(168, 85, 247, 0.1);
+.fo-challenge-btn:hover:not(:disabled) {
+  background: var(--accent-hover);
+  border-color: var(--accent-hover);
 }
 
 .fo-online-dot {
@@ -122,8 +122,16 @@
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: var(--fo-green);
+  background: #39ff88;
   margin-left: 4px;
+}
+
+.fo-online-inline-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #39ff88;
+  flex-shrink: 0;
 }
 
 .fo-in-match {
@@ -132,21 +140,6 @@
   border: 1px solid var(--border);
   border-radius: 9999px;
   padding: 8px 12px;
-  flex-shrink: 0;
-}
-
-.fo-username {
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.fo-online-inline-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--fo-green);
   flex-shrink: 0;
 }
 

@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { useAuth } from "../auth/AuthContext";
 import { supabase } from "../shared/supabaseClient";
 import "./findOpponent.css";
@@ -19,42 +18,10 @@ type FilterMode = "all" | "top_rated" | "new_players" | "most_wins";
 
 export default function FindOpponent() {
   const { session } = useAuth();
-  const navigate = useNavigate();
   const [players, setPlayers] = useState<PlayerRow[]>([]);
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<FilterMode>("all");
   const [message, setMessage] = useState<string | null>(null);
-  const [acceptedByOpponent, setAcceptedByOpponent] = useState<
-    Record<string, { matchId: string }>
-  >({});
-
-  async function loadAcceptedChallenges() {
-    if (!session) return;
-    const { data: accepted } = await supabase
-      .from("challenges")
-      .select("id, opponent_id")
-      .eq("challenger_id", session.user.id)
-      .eq("status", "accepted");
-
-    if (!accepted || accepted.length === 0) {
-      setAcceptedByOpponent({});
-      return;
-    }
-
-    const challengeIds = accepted.map((c) => c.id);
-    const { data: liveMatches } = await supabase
-      .from("matches")
-      .select("id, challenge_id")
-      .in("challenge_id", challengeIds)
-      .neq("status", "completed");
-
-    const map: Record<string, { matchId: string }> = {};
-    for (const c of accepted) {
-      const m = liveMatches?.find((m) => m.challenge_id === c.id);
-      if (m) map[c.opponent_id] = { matchId: m.id };
-    }
-    setAcceptedByOpponent(map);
-  }
 
   async function load() {
     const { data } = await supabase
@@ -67,29 +34,6 @@ export default function FindOpponent() {
     load();
     const interval = setInterval(load, 30_000);
     return () => clearInterval(interval);
-  }, [session]);
-
-  useEffect(() => {
-    if (!session) return;
-    loadAcceptedChallenges();
-
-    const channel = supabase
-      .channel(`fo-accepted-${session.user.id}`)
-      .on(
-        "postgres_changes",
-        {
-          event: "UPDATE",
-          schema: "public",
-          table: "challenges",
-          filter: `challenger_id=eq.${session.user.id}`,
-        },
-        () => loadAcceptedChallenges()
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
   }, [session]);
 
   const onlineCount = useMemo(() => players.filter((p) => p.is_online).length, [players]);
@@ -198,16 +142,6 @@ export default function FindOpponent() {
           </div>
           {p.in_active_match ? (
             <span className="fo-in-match">In a match</span>
-          ) : acceptedByOpponent[p.player_id] ? (
-            <div className="fo-accepted-wrap">
-              <button
-                className="fo-challenge-btn"
-                onClick={() => navigate(`/match/${acceptedByOpponent[p.player_id].matchId}`)}
-              >
-                Enter Match
-              </button>
-              <div className="fo-accepted-tip">{p.username} accepted your challenge</div>
-            </div>
           ) : (
             <button className="fo-challenge-btn" onClick={() => sendChallenge(p.player_id)}>
               Challenge

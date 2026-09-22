@@ -4,6 +4,7 @@ import AuthForm from "./auth/AuthForm";
 import BottomNav from "./nav/BottomNav";
 import LiveMatches from "./dashboard/LiveMatches";
 import IncomingChallenges from "./challenges/IncomingChallenges";
+import OutgoingChallenges from "./challenges/OutgoingChallenges";
 import FindOpponent from "./challenges/FindOpponent";
 import MatchHistoryPage from "./matches/MatchHistoryPage";
 import RankingsPage from "./rankings/RankingsPage";
@@ -22,6 +23,7 @@ function MatchesPage() {
     <div>
       <h1>Matches</h1>
       <IncomingChallenges />
+      <OutgoingChallenges />
       <FindOpponent />
     </div>
   );
